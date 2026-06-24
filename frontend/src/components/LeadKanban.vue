@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import {
-  Smartphone, Pencil, Trash2, MessageSquare,
+  Smartphone, Pencil, Trash2, MessageSquare, ChevronDown, ChevronRight,
 } from '@lucide/vue'
 
 const props = defineProps({
@@ -63,10 +63,17 @@ function getTemplateName(lead) {
   const tpl = props.templates.find((t) => t.id === lead.selected_template_id)
   return tpl?.template_name || null
 }
+
+const expandedColumn = ref(statusColumns[0].key)
+
+function toggleColumn(key) {
+  expandedColumn.value = expandedColumn.value === key ? null : key
+}
 </script>
 
 <template>
-  <div class="flex gap-4 overflow-x-auto pb-4 min-h-[50vh] md:min-h-[60vh] snap-x snap-mandatory">
+  <!-- Desktop: Kanban columns -->
+  <div class="hidden md:flex gap-4 overflow-x-auto pb-4 min-h-[60vh] snap-x snap-mandatory">
     <div
       v-for="col in statusColumns"
       :key="col.key"
@@ -158,6 +165,113 @@ function getTemplateName(lead) {
           class="flex items-center justify-center py-6 sm:py-8 text-xs text-slate-text/50 border-2 border-dashed border-outline-variant/10 rounded-lg"
         >
           Drop leads here
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: accordion -->
+  <div class="md:hidden space-y-2">
+    <div
+      v-for="col in statusColumns"
+      :key="col.key"
+      class="glass-panel rounded-xl overflow-hidden"
+    >
+      <button
+        @click="toggleColumn(col.key)"
+        class="flex items-center justify-between w-full px-4 py-3 text-left cursor-pointer transition hover:bg-surface-charcoal/50"
+      >
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full" :class="col.color.replace('border-l-', 'bg-')" />
+          <span class="text-sm font-semibold text-on-surface">{{ col.label }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-text bg-surface-charcoal px-2 py-0.5 rounded-full">
+            {{ leadsByStatus(col.key).length }}
+          </span>
+          <ChevronDown
+            v-if="expandedColumn === col.key"
+            class="w-4 h-4 text-slate-text transition"
+          />
+          <ChevronRight
+            v-else
+            class="w-4 h-4 text-slate-text transition"
+          />
+        </div>
+      </button>
+
+      <div v-if="expandedColumn === col.key" class="px-3 pb-3 space-y-2">
+        <div
+          v-for="lead in leadsByStatus(col.key)"
+          :key="lead.id"
+          class="glass-panel rounded-lg p-3 border border-outline-variant/10 space-y-2"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
+              <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              <button
+                @click.stop="emit('sendWhatsApp', lead)"
+                :disabled="!lead.selected_template_id"
+                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                title="Send WhatsApp"
+              >
+                <Smartphone class="w-3.5 h-3.5" />
+              </button>
+              <button
+                @click.stop="emit('contact', lead)"
+                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+                title="Contact modal"
+              >
+                <MessageSquare class="w-3.5 h-3.5" />
+              </button>
+              <button
+                @click.stop="emit('edit', lead)"
+                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+                title="Edit"
+              >
+                <Pencil class="w-3.5 h-3.5" />
+              </button>
+              <button
+                @click.stop="emit('delete', lead)"
+                class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
+                title="Delete"
+              >
+                <Trash2 class="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          <div v-if="lead.product_name || lead.tier_classification" class="flex flex-wrap gap-1">
+            <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
+              {{ lead.product_name }}
+            </span>
+            <span v-if="lead.tier_classification" class="text-xs bg-surface-charcoal text-slate-text px-1.5 py-0.5 rounded">
+              {{ lead.tier_classification }}
+            </span>
+          </div>
+
+          <div v-if="lead.email" class="text-xs text-slate-text truncate">
+            {{ lead.email }}
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-text">
+            <span v-if="lead.last_contact_date">
+              {{ new Date(lead.last_contact_date).toLocaleDateString() }}
+            </span>
+            <span v-if="getTemplateName(lead)" class="truncate max-w-[120px]">
+              {{ getTemplateName(lead) }}
+            </span>
+          </div>
+        </div>
+
+        <div
+          v-if="leadsByStatus(col.key).length === 0"
+          class="flex items-center justify-center py-6 text-xs text-slate-text/50 border-2 border-dashed border-outline-variant/10 rounded-lg"
+        >
+          No leads in this column
         </div>
       </div>
     </div>
