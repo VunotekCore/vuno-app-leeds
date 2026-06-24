@@ -151,7 +151,7 @@ async function handleSubmit() {
 
 <template>
   <div class="fixed inset-0 z-50 flex items-start justify-center pt-12 pb-12 bg-black/60 overflow-y-auto backdrop-blur-sm">
-    <div class="glass-panel rounded-xl shadow-xl w-full max-w-lg mx-4">
+    <div class="glass-panel rounded-xl shadow-xl w-full max-w-3xl mx-4">
       <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20">
         <h2 class="text-lg font-bold text-on-surface font-display">
           {{ isEditing ? 'Edit Lead' : 'Register New Lead' }}
