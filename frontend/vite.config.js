@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: { enabled: false },
       manifestFilename: 'manifest.json',
       includeAssets: ['**/*.{js,css,woff2,webp,png,svg}'],
       manifest: {

@@ -20,6 +20,11 @@ class Lead
       $params[':search3'] = "%{$filters['search']}%";
     }
 
+    if (!empty($filters['category_id'])) {
+      $conditions[] = 'l.category_id = :category_id';
+      $params[':category_id'] = $filters['category_id'];
+    }
+
     if (!empty($filters['contact_status'])) {
       $statuses = array_map('trim', explode(',', $filters['contact_status']));
       if (count($statuses) === 1) {
@@ -46,10 +51,12 @@ class Lead
     $sql = "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
                    l.followers_count, l.tier_classification, l.contact_status,
                    l.contact_attempts, l.last_contact_date, l.product_id,
-                   l.created_by, l.registration_date,
-                   p.name AS product_name
+                   l.category_id, l.created_by, l.registration_date,
+                   p.name AS product_name,
+                   c.name AS category_name
             FROM leads l
             LEFT JOIN products p ON p.id = l.product_id
+            LEFT JOIN categories c ON c.id = l.category_id
             $where
             ORDER BY l.registration_date DESC
             LIMIT :limit OFFSET :offset";
@@ -75,10 +82,12 @@ class Lead
       "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
               l.followers_count, l.tier_classification, l.contact_status,
               l.contact_attempts, l.last_contact_date, l.product_id,
-              l.created_by, l.registration_date,
-              p.name AS product_name
+              l.category_id, l.created_by, l.registration_date,
+              p.name AS product_name,
+              c.name AS category_name
        FROM leads l
        LEFT JOIN products p ON p.id = l.product_id
+       LEFT JOIN categories c ON c.id = l.category_id
        WHERE l.id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
@@ -94,10 +103,12 @@ class Lead
 
     $stmt = $db->prepare(
       "INSERT INTO leads (id, store_name, profile_url, phone, email,
-                          followers_count, tier_classification, product_id, contact_status,
+                          followers_count, tier_classification, product_id,
+                          category_id, contact_status,
                           created_by)
        VALUES (:id, :store_name, :profile_url, :phone, :email,
-               :followers_count, :tier_classification, :product_id, :contact_status,
+               :followers_count, :tier_classification, :product_id,
+               :category_id, :contact_status,
                :created_by)"
     );
 
@@ -110,6 +121,7 @@ class Lead
       ':followers_count'     => (int)($data['followers_count'] ?? 0),
       ':tier_classification' => $data['tier_classification'] ?? null,
       ':product_id'          => $data['product_id'] ?? null,
+      ':category_id'         => $data['category_id'] ?? null,
       ':contact_status'      => $data['contact_status'] ?? 'Pending',
       ':created_by'          => $data['created_by'],
     ]);
@@ -124,7 +136,7 @@ class Lead
     $params = [':id' => $uuid];
 
     $allowed = ['store_name', 'profile_url', 'email', 'followers_count',
-                'tier_classification', 'product_id', 'contact_status'];
+                'tier_classification', 'product_id', 'category_id', 'contact_status'];
 
     foreach ($allowed as $field) {
       if (array_key_exists($field, $data)) {
@@ -222,10 +234,12 @@ class Lead
       "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
               l.followers_count, l.tier_classification, l.contact_status,
               l.contact_attempts, l.last_contact_date, l.product_id,
-              l.created_by, l.registration_date,
-              p.name AS product_name
+              l.category_id, l.created_by, l.registration_date,
+              p.name AS product_name,
+              c.name AS category_name
        FROM leads l
        LEFT JOIN products p ON p.id = l.product_id
+       LEFT JOIN categories c ON c.id = l.category_id
        ORDER BY l.registration_date DESC
        LIMIT 500"
     );
@@ -257,10 +271,12 @@ class Lead
     $stmt = $db->prepare(
       "SELECT l.id, l.store_name, l.profile_url, l.phone,
               l.contact_status, l.contact_attempts, l.last_contact_date,
-              l.product_id, l.created_by,
-              p.name AS product_name
+              l.product_id, l.category_id, l.created_by,
+              p.name AS product_name,
+              c.name AS category_name
        FROM leads l
        LEFT JOIN products p ON p.id = l.product_id
+       LEFT JOIN categories c ON c.id = l.category_id
        WHERE l.contact_status = 'First Contact'
          AND l.last_contact_date <= DATE_SUB(NOW(), INTERVAL 2 DAY)
        ORDER BY l.last_contact_date ASC"

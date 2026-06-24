@@ -1,4 +1,5 @@
 <script setup>
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import {
@@ -7,6 +8,10 @@ import {
   FileText,
   DollarSign,
   Package,
+  FolderKanban,
+  Settings,
+  ChevronDown,
+  ChevronRight,
   X,
   LogOut,
 } from '@lucide/vue'
@@ -21,17 +26,30 @@ const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 
-const navItems = [
+const settingsOpen = ref(true)
+
+const mainNav = [
   { name: 'Dashboard', route: 'Dashboard', icon: LayoutDashboard },
   { name: 'Leads', route: 'Leads', icon: Users },
-  { name: 'Templates', route: 'Templates', icon: FileText },
-  { name: 'Tiers', route: 'Tiers', icon: DollarSign },
   { name: 'Products', route: 'Products', icon: Package },
-  { name: 'Users', route: 'Users', icon: Users },
 ]
+
+const settingsItems = [
+  { name: 'Categories', route: 'Categories', icon: FolderKanban },
+  { name: 'Tiers', route: 'Tiers', icon: DollarSign },
+  { name: 'Templates', route: 'Templates', icon: FileText },
+]
+
+const isInSettings = computed(() =>
+  settingsItems.some(item => route.name === item.route)
+)
 
 function isActive(item) {
   return route.name === item.route
+}
+
+function isAnySettingsActive() {
+  return isInSettings.value
 }
 
 async function handleLogout() {
@@ -74,7 +92,7 @@ function close() {
 
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
       <router-link
-        v-for="item in navItems"
+        v-for="item in mainNav"
         :key="item.route"
         :to="{ name: item.route }"
         @click="close"
@@ -86,6 +104,38 @@ function close() {
         <component :is="item.icon" class="w-5 h-5 shrink-0" />
         {{ item.name }}
       </router-link>
+
+      <div class="pt-2">
+        <button
+          @click="settingsOpen = !settingsOpen"
+          class="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
+          :class="isAnySettingsActive()
+            ? 'bg-vue-green/10 text-vue-green'
+            : 'text-slate-text hover:text-on-surface hover:bg-surface-charcoal'"
+        >
+          <div class="flex items-center gap-3">
+            <Settings class="w-5 h-5 shrink-0" />
+            <span>Settings</span>
+          </div>
+          <component :is="settingsOpen ? ChevronDown : ChevronRight" class="w-4 h-4" />
+        </button>
+
+        <div v-if="settingsOpen" class="ml-2 mt-1 space-y-0.5">
+          <router-link
+            v-for="item in settingsItems"
+            :key="item.route"
+            :to="{ name: item.route }"
+            @click="close"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+            :class="isActive(item)
+              ? 'bg-vue-green/10 text-vue-green border border-vue-green/20'
+              : 'text-slate-text hover:text-on-surface hover:bg-surface-charcoal border border-transparent'"
+          >
+            <component :is="item.icon" class="w-4 h-4 shrink-0" />
+            {{ item.name }}
+          </router-link>
+        </div>
+      </div>
     </nav>
 
     <div class="px-3 py-4 border-t border-outline-variant/20">

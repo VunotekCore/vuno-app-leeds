@@ -6,6 +6,7 @@ defineProps({
   loading: { type: Boolean, default: false },
   templates: { type: Array, default: () => [] },
   products: { type: Array, default: () => [] },
+  categories: { type: Array, default: () => [] },
   statusScope: { type: String, default: 'prospecting' },
 })
 
@@ -33,6 +34,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
             <th class="text-left px-4 py-3 font-medium hidden md:table-cell">Product</th>
             <th class="text-left px-4 py-3 font-medium">Status</th>
             <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Tier</th>
+            <th class="text-left px-4 py-3 font-medium hidden xl:table-cell">Category</th>
             <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Template</th>
             <th class="text-left px-4 py-3 font-medium">Actions</th>
           </tr>
@@ -86,6 +88,12 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
             </td>
             <td class="px-4 py-3 text-on-surface-variant hidden lg:table-cell">
               {{ lead.tier_classification || '-' }}
+            </td>
+            <td class="px-4 py-3 text-on-surface-variant hidden xl:table-cell">
+              <span v-if="lead.category_name" class="text-xs bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded font-medium">
+                {{ lead.category_name }}
+              </span>
+              <span v-else class="text-slate-text">-</span>
             </td>
             <td class="px-4 py-3 hidden lg:table-cell">
               <select
@@ -177,6 +185,12 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
             class="text-xs bg-surface-charcoal text-slate-text px-1.5 py-0.5 rounded"
           >
             {{ lead.tier_classification }}
+          </span>
+          <span
+            v-if="lead.category_name"
+            class="text-xs bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded font-medium"
+          >
+            {{ lead.category_name }}
           </span>
           <span v-if="lead.last_contact_date" class="text-xs text-slate-text px-1.5 py-0.5">
             {{ new Date(lead.last_contact_date).toLocaleDateString() }}
