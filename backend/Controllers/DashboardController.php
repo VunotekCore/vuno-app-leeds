@@ -11,10 +11,12 @@ class DashboardController
   {
     $metrics = Lead::getDashboardMetrics();
     $followUpAlerts = Lead::getFollowUpAlerts();
+    $projection = Lead::getMonetaryProjection();
 
     Response::success([
-      'metrics'         => $metrics,
-      'follow_up_alerts' => $followUpAlerts,
+      'metrics'          => $metrics,
+      'follow_up_alerts'  => $followUpAlerts,
+      'projection'        => $projection,
     ]);
   }
 }

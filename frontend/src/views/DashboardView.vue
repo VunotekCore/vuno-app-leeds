@@ -4,11 +4,13 @@ import { useRouter } from 'vue-router'
 import api from '../services/api'
 import DashboardCards from '../components/DashboardCards.vue'
 import FollowUpAlerts from '../components/FollowUpAlerts.vue'
+import MonetaryProjection from '../components/MonetaryProjection.vue'
 import { BarChart3, Loader } from '@lucide/vue'
 
 const router = useRouter()
 const metrics = ref(null)
 const followUpAlerts = ref([])
+const projection = ref(null)
 const loading = ref(true)
 
 onMounted(async () => {
@@ -16,6 +18,7 @@ onMounted(async () => {
     const { data } = await api.get('/api/dashboard')
     metrics.value = data.data.metrics
     followUpAlerts.value = data.data.follow_up_alerts
+    projection.value = data.data.projection
   } catch {
     //
   } finally {
@@ -37,6 +40,7 @@ onMounted(async () => {
 
     <template v-else>
       <DashboardCards v-if="metrics" :metrics="metrics" />
+      <MonetaryProjection v-if="projection" :projection="projection" />
       <FollowUpAlerts
         :alerts="followUpAlerts"
         @view-lead="() => router.push({ name: 'Leads' })"

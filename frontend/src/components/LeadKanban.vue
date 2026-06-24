@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import {
-  Smartphone, Pencil, Trash2, MessageSquare, ChevronDown, ChevronRight,
+  Smartphone, Pencil, Trash2, MessageSquare, ChevronDown, ChevronRight, FileText,
 } from '@lucide/vue'
 
 const props = defineProps({
@@ -11,7 +11,7 @@ const props = defineProps({
   search: { type: String, default: '' },
 })
 
-const emit = defineEmits(['updateStatus', 'edit', 'delete', 'contact', 'sendWhatsApp'])
+const emit = defineEmits(['updateStatus', 'edit', 'delete', 'contact', 'sendWhatsApp', 'notes'])
 
 const statusColumns = [
   { key: 'Pending', label: 'Pending', color: 'border-l-yellow-500' },
@@ -135,6 +135,13 @@ function toggleColumn(key) {
           <!-- Footer -->
           <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
             <button
+              @click.stop="emit('notes', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Notes"
+            >
+              <FileText class="w-3.5 h-3.5" />
+            </button>
+            <button
               @click.stop="emit('sendWhatsApp', lead)"
               :disabled="!lead.selected_template_id"
               class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
@@ -243,6 +250,13 @@ function toggleColumn(key) {
           </div>
 
           <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
+            <button
+              @click.stop="emit('notes', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Notes"
+            >
+              <FileText class="w-3.5 h-3.5" />
+            </button>
             <button
               @click.stop="emit('sendWhatsApp', lead)"
               :disabled="!lead.selected_template_id"
