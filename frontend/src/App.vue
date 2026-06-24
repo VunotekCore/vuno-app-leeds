@@ -15,19 +15,29 @@ function toggleSidebar() {
 <template>
   <div class="min-h-screen bg-surface flex">
     <AppSidebar v-if="auth.isAuthenticated" :is-open="sidebarOpen" @toggle="toggleSidebar" />
-    <main
-      class="flex-1 min-h-screen transition-all duration-300"
-      :class="auth.isAuthenticated ? 'pl-14 lg:pl-0 lg:ml-64' : ''"
-    >
-      <button
+
+    <div class="flex-1 flex flex-col min-h-screen">
+      <header
         v-if="auth.isAuthenticated"
-        @click="toggleSidebar"
-        class="fixed top-4 left-4 z-30 lg:hidden p-2 bg-surface-charcoal border border-outline-variant/30 rounded-lg text-slate-text hover:text-on-surface transition cursor-pointer"
-        aria-label="Toggle sidebar"
+        class="lg:hidden fixed top-0 left-0 right-0 z-20 h-14 glass-panel border-b border-outline-variant/20 flex items-center gap-3 px-4"
       >
-        <Menu class="w-5 h-5" />
-      </button>
-      <router-view />
-    </main>
+        <button
+          @click="toggleSidebar"
+          class="p-2 bg-surface-charcoal border border-outline-variant/30 rounded-lg text-slate-text hover:text-on-surface transition cursor-pointer"
+          aria-label="Toggle sidebar"
+        >
+          <Menu class="w-5 h-5" />
+        </button>
+        <span class="font-display text-sm font-bold text-on-surface tracking-tight">VUNO</span>
+        <span class="font-display text-sm font-bold text-vue-green tracking-tight">LEED</span>
+      </header>
+
+      <main
+        class="flex-1 min-h-screen transition-all duration-300"
+        :class="auth.isAuthenticated ? 'pt-14 lg:pt-0 lg:ml-64' : ''"
+      >
+        <router-view />
+      </main>
+    </div>
   </div>
 </template>
