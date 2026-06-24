@@ -1,0 +1,21 @@
+# =====================================================
+# vuno-leed — .htaccess para public_html/leeds/
+# Copiar a: /public_html/leeds/.htaccess  (vía FTP)
+# =====================================================
+# Este archivo solo afecta la carpeta leeds/ y sus
+# subdirectorios. NO afecta el sitio principal.
+# =====================================================
+
+Options -Indexes
+RewriteEngine On
+
+# ── API → backend PHP ────────────────────────────────
+RewriteRule ^api/ backend/public/index.php [QSA,L]
+
+# ── Archivos/carpetas existentes sírvanse directo ────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── SPA: todo lo demás → index.html ──────────────────
+RewriteRule ^ index.html [L]
