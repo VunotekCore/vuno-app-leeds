@@ -10,11 +10,14 @@
  * y Apache nunca las sirve como texto — igual que WordPress con wp-config.php.
  */
 
-$dbPass   = readline('DB_PASS: ');
+$dbHost = readline('DB_HOST [localhost]: ') ?: 'localhost';
+$dbName = readline('DB_NAME [vuno_app_leed]: ') ?: 'vuno_app_leed';
+$dbUser = readline('DB_USER [dail]: ') ?: 'dail';
+$dbPass = readline('DB_PASS: ');
 $jwtSecret = readline('JWT_SECRET: ');
 
 if (!$dbPass || !$jwtSecret) {
-  fwrite(STDERR, "Both values are required\n");
+  fwrite(STDERR, "DB_PASS and JWT_SECRET are required\n");
   exit(1);
 }
 
@@ -22,10 +25,10 @@ $dbConfig = <<<PHP
 <?php
 
 return [
-  'host'     => 'localhost',
+  'host'     => '$dbHost',
   'port'     => '3306',
-  'dbname'   => 'vuno_app_leed',
-  'username' => 'dail',
+  'dbname'   => '$dbName',
+  'username' => '$dbUser',
   'password' => '$dbPass',
   'socket'   => '',
   'charset'  => 'utf8mb4',
