@@ -217,13 +217,14 @@ onMounted(() => {
     <div class="flex items-center gap-1 bg-surface-charcoal rounded-xl p-1 w-full overflow-x-auto border border-outline-variant/20">
       <button
         @click="handleTabChange('prospecting')"
+        title="Prospección"
         class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'prospecting'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
         <Target class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        Prospección
+        <span class="hidden sm:inline">Prospección</span>
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"
           :class="activeTab === 'prospecting' ? 'bg-forest-deep/20 text-forest-deep' : 'bg-surface-charcoal text-slate-text'"
@@ -233,13 +234,14 @@ onMounted(() => {
       </button>
       <button
         @click="handleTabChange('clients')"
+        title="Clientes"
         class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'clients'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
         <Star class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        Clientes
+        <span class="hidden sm:inline">Clientes</span>
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"
           :class="activeTab === 'clients' ? 'bg-forest-deep/20 text-forest-deep' : 'bg-surface-charcoal text-slate-text'"
@@ -249,13 +251,14 @@ onMounted(() => {
       </button>
       <button
         @click="handleTabChange('archived')"
+        title="Archivados"
         class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'archived'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
         <Archive class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        Archivados
+        <span class="hidden sm:inline">Archivados</span>
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"
           :class="activeTab === 'archived' ? 'bg-forest-deep/20 text-forest-deep' : 'bg-surface-charcoal text-slate-text'"
