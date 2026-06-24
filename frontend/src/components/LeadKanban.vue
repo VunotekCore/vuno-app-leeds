@@ -99,44 +99,13 @@ function toggleColumn(key) {
           @dragstart="(e) => onDragStart(e, lead.id)"
           class="glass-panel rounded-lg p-2 sm:p-3 border border-outline-variant/10 cursor-grab active:cursor-grabbing hover:border-vue-green/30 transition-all duration-150 space-y-2"
         >
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
-              <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
-            </div>
-            <div class="flex gap-1 shrink-0">
-              <button
-                @click.stop="emit('sendWhatsApp', lead)"
-                :disabled="!lead.selected_template_id"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                title="Send WhatsApp"
-              >
-                <Smartphone class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('contact', lead)"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
-                title="Contact modal"
-              >
-                <MessageSquare class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('edit', lead)"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
-                title="Edit"
-              >
-                <Pencil class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('delete', lead)"
-                class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
-                title="Delete"
-              >
-                <Trash2 class="w-3.5 h-3.5" />
-              </button>
-            </div>
+          <!-- Header -->
+          <div class="mb-1">
+            <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
+            <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
           </div>
 
+          <!-- Body -->
           <div v-if="lead.product_name || lead.tier_classification" class="flex flex-wrap gap-1">
             <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
               {{ lead.product_name }}
@@ -157,6 +126,39 @@ function toggleColumn(key) {
             <span v-if="getTemplateName(lead)" class="truncate max-w-[120px]">
               {{ getTemplateName(lead) }}
             </span>
+          </div>
+
+          <!-- Footer -->
+          <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
+            <button
+              @click.stop="emit('sendWhatsApp', lead)"
+              :disabled="!lead.selected_template_id"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Send WhatsApp"
+            >
+              <Smartphone class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('contact', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Contact modal"
+            >
+              <MessageSquare class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('edit', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Edit"
+            >
+              <Pencil class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('delete', lead)"
+              class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
+              title="Delete"
+            >
+              <Trash2 class="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -206,42 +208,9 @@ function toggleColumn(key) {
           :key="lead.id"
           class="glass-panel rounded-lg p-3 border border-outline-variant/10 space-y-2"
         >
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
-              <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
-            </div>
-            <div class="flex gap-1 shrink-0">
-              <button
-                @click.stop="emit('sendWhatsApp', lead)"
-                :disabled="!lead.selected_template_id"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                title="Send WhatsApp"
-              >
-                <Smartphone class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('contact', lead)"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
-                title="Contact modal"
-              >
-                <MessageSquare class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('edit', lead)"
-                class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
-                title="Edit"
-              >
-                <Pencil class="w-3.5 h-3.5" />
-              </button>
-              <button
-                @click.stop="emit('delete', lead)"
-                class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
-                title="Delete"
-              >
-                <Trash2 class="w-3.5 h-3.5" />
-              </button>
-            </div>
+          <div class="mb-1">
+            <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
+            <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
           </div>
 
           <div v-if="lead.product_name || lead.tier_classification" class="flex flex-wrap gap-1">
@@ -264,6 +233,38 @@ function toggleColumn(key) {
             <span v-if="getTemplateName(lead)" class="truncate max-w-[120px]">
               {{ getTemplateName(lead) }}
             </span>
+          </div>
+
+          <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
+            <button
+              @click.stop="emit('sendWhatsApp', lead)"
+              :disabled="!lead.selected_template_id"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Send WhatsApp"
+            >
+              <Smartphone class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('contact', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Contact modal"
+            >
+              <MessageSquare class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('edit', lead)"
+              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              title="Edit"
+            >
+              <Pencil class="w-3.5 h-3.5" />
+            </button>
+            <button
+              @click.stop="emit('delete', lead)"
+              class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
+              title="Delete"
+            >
+              <Trash2 class="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 

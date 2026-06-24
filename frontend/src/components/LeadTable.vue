@@ -158,28 +158,10 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
         class="glass-panel rounded-xl p-4 transition hover:border-vue-green/30"
       >
         <!-- Header -->
-        <div class="flex items-start justify-between gap-3 mb-2">
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
-            <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
-            <p v-if="lead.email" class="text-xs text-slate-text truncate">{{ lead.email }}</p>
-          </div>
-          <div class="flex gap-1 shrink-0">
-            <button
-              @click="emit('edit', lead)"
-              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-              title="Edit"
-            >
-              <Pencil class="w-4 h-4" />
-            </button>
-            <button
-              @click="emit('delete', lead)"
-              class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
-              title="Delete"
-            >
-              <Trash2 class="w-4 h-4" />
-            </button>
-          </div>
+        <div class="mb-2">
+          <p class="text-sm font-semibold text-on-surface truncate">{{ lead.store_name }}</p>
+          <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
+          <p v-if="lead.email" class="text-xs text-slate-text truncate">{{ lead.email }}</p>
         </div>
 
         <!-- Body -->
@@ -258,6 +240,20 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
               <Smartphone class="w-4 h-4" />
             </button>
           </template>
+          <button
+            @click="emit('edit', lead)"
+            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            title="Edit"
+          >
+            <Pencil class="w-4 h-4" />
+          </button>
+          <button
+            @click="emit('delete', lead)"
+            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+            title="Delete"
+          >
+            <Trash2 class="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

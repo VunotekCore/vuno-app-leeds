@@ -221,7 +221,7 @@ onMounted(fetchUsers)
             {{ user.whatsapp_apikey ? 'Configured' : 'Not set' }}
           </span>
         </div>
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center justify-end gap-2 flex-wrap pt-3 border-t border-outline-variant/10">
           <button
             @click="openApikey(user)"
             class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer"
