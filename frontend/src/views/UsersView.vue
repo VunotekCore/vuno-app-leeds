@@ -111,11 +111,11 @@ onMounted(fetchUsers)
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <Users class="w-6 h-6 text-vue-green" />
-        <h1 class="text-xl font-bold text-on-surface font-display">Users</h1>
+        <Users class="w-6 h-6 text-vue-green shrink-0" />
+        <h1 class="text-lg sm:text-xl font-bold text-on-surface font-display">Users</h1>
       </div>
       <button
         @click="openCreateUser"
@@ -136,6 +136,7 @@ onMounted(fetchUsers)
     </div>
 
     <div v-else class="glass-panel rounded-xl overflow-hidden">
+      <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
           <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
@@ -192,6 +193,7 @@ onMounted(fetchUsers)
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- User Create/Edit Modal -->

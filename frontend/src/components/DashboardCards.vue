@@ -21,7 +21,7 @@ const cards = [
       class="glass-panel rounded-xl p-5 flex items-center gap-4 transition-all duration-300 hover:shadow-lg hover:shadow-vue-green/5"
     >
       <div
-        class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center"
+        class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-container-highest flex items-center justify-center shrink-0"
         :class="{ 'text-vue-green': card.accent === 'vue-green', 'text-warning': card.accent === 'warning', 'text-info': card.accent === 'info', 'text-success': card.accent === 'success' }"
       >
         <component :is="card.icon" class="w-6 h-6" />

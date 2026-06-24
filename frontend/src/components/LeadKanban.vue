@@ -90,7 +90,7 @@ function getTemplateName(lead) {
           :key="lead.id"
           :draggable="true"
           @dragstart="(e) => onDragStart(e, lead.id)"
-          class="glass-panel rounded-lg p-3 border border-outline-variant/10 cursor-grab active:cursor-grabbing hover:border-vue-green/30 transition-all duration-150 space-y-2"
+          class="glass-panel rounded-lg p-2 sm:p-3 border border-outline-variant/10 cursor-grab active:cursor-grabbing hover:border-vue-green/30 transition-all duration-150 space-y-2"
         >
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">

@@ -29,10 +29,10 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
           <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
             <th class="text-left px-4 py-3 font-medium">Store</th>
             <th class="text-left px-4 py-3 font-medium">Contact</th>
-            <th class="text-left px-4 py-3 font-medium">Product</th>
+            <th class="text-left px-4 py-3 font-medium hidden md:table-cell">Product</th>
             <th class="text-left px-4 py-3 font-medium">Status</th>
-            <th class="text-left px-4 py-3 font-medium">Tier</th>
-            <th class="text-left px-4 py-3 font-medium">Template</th>
+            <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Tier</th>
+            <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Template</th>
             <th class="text-left px-4 py-3 font-medium">Actions</th>
           </tr>
         </thead>
@@ -46,7 +46,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
               <div class="text-on-surface">{{ lead.phone ? `+${lead.phone}` : '-' }}</div>
               <div v-if="lead.email" class="text-xs text-slate-text">{{ lead.email }}</div>
             </td>
-            <td class="px-4 py-3 text-on-surface-variant text-sm">
+            <td class="px-4 py-3 text-on-surface-variant text-sm hidden md:table-cell">
               <span v-if="lead.product_name" class="inline-flex items-center gap-1">
                 {{ lead.product_name }}
               </span>
@@ -83,10 +83,10 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
                 {{ new Date(lead.last_contact_date).toLocaleDateString() }}
               </div>
             </td>
-            <td class="px-4 py-3 text-on-surface-variant">
+            <td class="px-4 py-3 text-on-surface-variant hidden lg:table-cell">
               {{ lead.tier_classification || '-' }}
             </td>
-            <td class="px-4 py-3">
+            <td class="px-4 py-3 hidden lg:table-cell">
               <select
                 v-model="lead.selected_template_id"
                 class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none"

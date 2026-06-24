@@ -81,25 +81,25 @@ async function handleSend() {
 
       <div class="p-6 space-y-4">
         <div class="glass-panel rounded-lg p-3 space-y-1 text-sm">
-          <div class="flex justify-between">
-            <span class="text-slate-text">Phone</span>
-            <span class="text-on-surface font-medium">+{{ lead.phone }}</span>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-text shrink-0">Phone</span>
+            <span class="text-on-surface font-medium truncate">+{{ lead.phone }}</span>
           </div>
-          <div v-if="lead.email" class="flex justify-between">
-            <span class="text-slate-text">Email</span>
-            <span class="text-on-surface font-medium">{{ lead.email }}</span>
+          <div v-if="lead.email" class="flex justify-between gap-4">
+            <span class="text-slate-text shrink-0">Email</span>
+            <span class="text-on-surface font-medium truncate">{{ lead.email }}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-slate-text">Status</span>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-text shrink-0">Status</span>
             <span class="text-on-surface font-medium">{{ lead.contact_status }}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-slate-text">Tier</span>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-text shrink-0">Tier</span>
             <span class="text-on-surface font-medium">{{ lead.tier_classification || '-' }}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-slate-text">Product</span>
-            <span class="text-on-surface font-medium">{{ lead.product_name || '-' }}</span>
+          <div class="flex justify-between gap-4">
+            <span class="text-slate-text shrink-0">Product</span>
+            <span class="text-on-surface font-medium truncate">{{ lead.product_name || '-' }}</span>
           </div>
         </div>
 

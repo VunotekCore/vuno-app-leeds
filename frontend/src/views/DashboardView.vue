@@ -25,10 +25,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
     <div class="flex items-center gap-3">
-      <BarChart3 class="w-6 h-6 text-vue-green" />
-      <h1 class="text-xl font-bold text-on-surface font-display">Dashboard</h1>
+      <BarChart3 class="w-6 h-6 text-vue-green shrink-0" />
+      <h1 class="text-lg sm:text-xl font-bold text-on-surface font-display">Dashboard</h1>
     </div>
 
     <div v-if="loading" class="flex justify-center py-12">

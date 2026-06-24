@@ -199,11 +199,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <Users class="w-6 h-6 text-vue-green" />
-        <h1 class="text-xl font-bold text-on-surface font-display">Leads</h1>
+        <Users class="w-6 h-6 text-vue-green shrink-0" />
+        <h1 class="text-lg sm:text-xl font-bold text-on-surface font-display">Leads</h1>
       </div>
       <button
         @click="handleNewLead"
@@ -214,7 +214,7 @@ onMounted(() => {
       </button>
     </div>
 
-    <div class="flex items-center gap-1 bg-surface-charcoal rounded-xl p-1 w-fit border border-outline-variant/20">
+    <div class="flex items-center gap-1 bg-surface-charcoal rounded-xl p-1 w-full sm:w-fit overflow-x-auto border border-outline-variant/20">
       <button
         @click="handleTabChange('prospecting')"
         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer"
@@ -265,8 +265,8 @@ onMounted(() => {
       </button>
     </div>
 
-    <div class="flex gap-3">
-      <div class="relative flex-1 max-w-sm">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-1 w-full sm:max-w-sm">
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-text" />
         <input
           v-model="search"

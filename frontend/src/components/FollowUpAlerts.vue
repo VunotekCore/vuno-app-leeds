@@ -29,7 +29,7 @@ const emit = defineEmits(['viewLead'])
       <div
         v-for="alert in alerts"
         :key="alert.id"
-        class="px-5 py-4 flex items-center justify-between hover:bg-surface-charcoal/50 transition"
+        class="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-surface-charcoal/50 transition"
       >
         <div>
           <p class="font-medium text-on-surface">{{ alert.store_name }}</p>
