@@ -96,29 +96,28 @@ onMounted(fetchTiers)
       <div
         v-for="tier in tiers"
         :key="tier.id"
-        class="glass-panel rounded-xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-vue-green/5"
+        class="glass-panel rounded-xl p-4 transition-all duration-300 hover:border-vue-green/30"
       >
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-semibold text-on-surface font-display text-lg">{{ tier.name }}</h3>
-            <p class="text-2xl font-bold text-vue-green mt-1 font-display">
-              ${{ parseFloat(tier.price).toFixed(2) }} USD
-            </p>
-          </div>
-          <div class="flex gap-1">
-            <button
-              @click="openEdit(tier)"
-              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-            >
-              <Pencil class="w-4 h-4" />
-            </button>
-            <button
-              @click="handleDelete(tier)"
-              class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
-            >
-              <Trash2 class="w-4 h-4" />
-            </button>
-          </div>
+        <div class="mb-2">
+          <h3 class="font-semibold text-on-surface font-display text-sm">{{ tier.name }}</h3>
+          <p class="text-xl font-bold text-vue-green mt-1 font-display">
+            ${{ parseFloat(tier.price).toFixed(2) }} USD
+          </p>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+          <button
+            @click="openEdit(tier)"
+            class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+          >
+            <Pencil class="w-3 h-3" />
+            Edit
+          </button>
+          <button
+            @click="handleDelete(tier)"
+            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+          >
+            <Trash2 class="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

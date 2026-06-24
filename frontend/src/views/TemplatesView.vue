@@ -111,42 +111,41 @@ onMounted(() => {
       <div
         v-for="template in templates"
         :key="template.id"
-        class="glass-panel rounded-xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-vue-green/5"
+        class="glass-panel rounded-xl p-4 transition-all duration-300 hover:border-vue-green/30"
       >
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-semibold text-on-surface font-display">{{ template.template_name }}</h3>
-            <span
-              v-if="template.product_name"
-              class="inline-block mt-1 text-xs bg-vue-green/10 text-vue-green px-2 py-0.5 rounded-full font-medium"
-            >
-              {{ template.product_name }}
-            </span>
-            <span
-              v-else
-              class="inline-block mt-1 text-xs bg-surface-charcoal text-slate-text px-2 py-0.5 rounded-full"
-            >
-              Global
-            </span>
-          </div>
-          <div class="flex gap-1">
-            <button
-              @click="openEdit(template)"
-              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-            >
-              <Pencil class="w-4 h-4" />
-            </button>
-            <button
-              @click="handleDelete(template)"
-              class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
-            >
-              <Trash2 class="w-4 h-4" />
-            </button>
-          </div>
+        <div class="mb-2">
+          <h3 class="font-semibold text-on-surface font-display text-sm">{{ template.template_name }}</h3>
+          <span
+            v-if="template.product_name"
+            class="inline-block mt-1 text-xs bg-vue-green/10 text-vue-green px-2 py-0.5 rounded-full font-medium"
+          >
+            {{ template.product_name }}
+          </span>
+          <span
+            v-else
+            class="inline-block mt-1 text-xs bg-surface-charcoal text-slate-text px-2 py-0.5 rounded-full"
+          >
+            Global
+          </span>
         </div>
-        <p class="text-sm text-on-surface-variant whitespace-pre-wrap line-clamp-4">{{ template.message_body }}</p>
-        <div class="mt-3 text-xs text-slate-text">
-          Available tags: <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code> <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code> <code class="bg-surface-charcoal px-1 rounded">[ProductName]</code>
+        <p class="text-sm text-on-surface-variant whitespace-pre-wrap line-clamp-4 mb-3">{{ template.message_body }}</p>
+        <div class="text-xs text-slate-text mb-3">
+          Tags: <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code> <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code> <code class="bg-surface-charcoal px-1 rounded">[ProductName]</code>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+          <button
+            @click="openEdit(template)"
+            class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+          >
+            <Pencil class="w-3 h-3" />
+            Edit
+          </button>
+          <button
+            @click="handleDelete(template)"
+            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+          >
+            <Trash2 class="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

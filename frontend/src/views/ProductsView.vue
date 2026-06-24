@@ -151,29 +151,28 @@ onMounted(fetchProducts)
         :key="product.id"
         class="glass-panel rounded-xl p-4 transition hover:border-vue-green/30"
       >
-        <div class="flex items-start justify-between gap-3 mb-2">
-          <div class="min-w-0 flex-1">
-            <h3 class="text-sm font-semibold text-on-surface font-display truncate">{{ product.name }}</h3>
-            <p v-if="product.base_price" class="text-lg font-bold text-vue-green mt-0.5 font-display">
-              ${{ parseFloat(product.base_price).toFixed(2) }} USD
-            </p>
-          </div>
-          <div class="flex gap-1 shrink-0">
-            <button
-              @click="openEdit(product)"
-              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-            >
-              <Pencil class="w-4 h-4" />
-            </button>
-            <button
-              @click="handleDelete(product)"
-              class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
-            >
-              <Trash2 class="w-4 h-4" />
-            </button>
-          </div>
+        <div class="mb-2">
+          <h3 class="text-sm font-semibold text-on-surface font-display truncate">{{ product.name }}</h3>
+          <p v-if="product.base_price" class="text-lg font-bold text-vue-green mt-0.5 font-display">
+            ${{ parseFloat(product.base_price).toFixed(2) }} USD
+          </p>
         </div>
-        <p v-if="product.description" class="text-xs text-on-surface-variant line-clamp-2">{{ product.description }}</p>
+        <p v-if="product.description" class="text-xs text-on-surface-variant line-clamp-2 mb-3">{{ product.description }}</p>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+          <button
+            @click="openEdit(product)"
+            class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+          >
+            <Pencil class="w-3 h-3" />
+            Edit
+          </button>
+          <button
+            @click="handleDelete(product)"
+            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+          >
+            <Trash2 class="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
     </template>
