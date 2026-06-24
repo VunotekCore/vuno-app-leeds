@@ -207,22 +207,22 @@ onMounted(() => {
       </div>
       <button
         @click="handleNewLead"
-        class="flex items-center gap-2 bg-vue-green hover:bg-node-green text-forest-deep font-semibold px-4 py-2 rounded-lg text-sm transition cursor-pointer"
+        class="flex items-center gap-1.5 sm:gap-2 bg-vue-green hover:bg-node-green text-forest-deep font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm transition cursor-pointer whitespace-nowrap"
       >
-        <Plus class="w-4 h-4" />
+        <Plus class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         New Lead
       </button>
     </div>
 
-    <div class="flex items-center gap-1 bg-surface-charcoal rounded-xl p-1 w-full sm:w-fit overflow-x-auto border border-outline-variant/20">
+    <div class="flex items-center gap-1 bg-surface-charcoal rounded-xl p-1 w-full overflow-x-auto border border-outline-variant/20">
       <button
         @click="handleTabChange('prospecting')"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer"
+        class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'prospecting'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
-        <Target class="w-4 h-4" />
+        <Target class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         Prospección
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"
@@ -233,12 +233,12 @@ onMounted(() => {
       </button>
       <button
         @click="handleTabChange('clients')"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer"
+        class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'clients'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
-        <Star class="w-4 h-4" />
+        <Star class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         Clientes
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"
@@ -249,12 +249,12 @@ onMounted(() => {
       </button>
       <button
         @click="handleTabChange('archived')"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer"
+        class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer whitespace-nowrap"
         :class="activeTab === 'archived'
           ? 'bg-vue-green text-forest-deep shadow-sm'
           : 'text-slate-text hover:text-on-surface'"
       >
-        <Archive class="w-4 h-4" />
+        <Archive class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         Archivados
         <span
           class="text-xs px-1.5 py-0.5 rounded-full"

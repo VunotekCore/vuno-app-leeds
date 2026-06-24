@@ -66,25 +66,25 @@ function getTemplateName(lead) {
 </script>
 
 <template>
-  <div class="flex gap-4 overflow-x-auto pb-4 min-h-[60vh]">
+  <div class="flex gap-4 overflow-x-auto pb-4 min-h-[50vh] md:min-h-[60vh] snap-x snap-mandatory">
     <div
       v-for="col in statusColumns"
       :key="col.key"
-      class="flex-1 min-w-[240px] bg-surface-charcoal/50 rounded-xl border border-outline-variant/20 flex flex-col"
+      class="w-[260px] sm:w-[280px] shrink-0 snap-start bg-surface-charcoal/50 rounded-xl border border-outline-variant/20 flex flex-col"
       @dragover="onDragOver"
       @drop="(e) => onDrop(e, col.key)"
     >
-      <div class="flex items-center justify-between px-4 py-3 border-b border-outline-variant/10">
-        <div class="flex items-center gap-2">
-          <div class="w-2 h-2 rounded-full" :class="col.color.replace('border-l-', 'bg-')" />
-          <h3 class="text-sm font-semibold text-on-surface">{{ col.label }}</h3>
+      <div class="flex items-center justify-between px-2.5 sm:px-4 py-2 sm:py-3 border-b border-outline-variant/10">
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <div class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full shrink-0" :class="col.color.replace('border-l-', 'bg-')" />
+          <h3 class="text-xs sm:text-sm font-semibold text-on-surface">{{ col.label }}</h3>
         </div>
-        <span class="text-xs text-slate-text bg-surface-charcoal px-2 py-0.5 rounded-full">
+        <span class="text-xs text-slate-text bg-surface-charcoal px-1.5 sm:px-2 py-0.5 rounded-full">
           {{ leadsByStatus(col.key).length }}
         </span>
       </div>
 
-      <div class="flex-1 p-3 space-y-3 overflow-y-auto">
+      <div class="flex-1 p-2 sm:p-3 space-y-2 sm:space-y-3 overflow-y-auto">
         <div
           v-for="lead in leadsByStatus(col.key)"
           :key="lead.id"
@@ -155,7 +155,7 @@ function getTemplateName(lead) {
 
         <div
           v-if="leadsByStatus(col.key).length === 0"
-          class="flex items-center justify-center py-8 text-xs text-slate-text/50 border-2 border-dashed border-outline-variant/10 rounded-lg"
+          class="flex items-center justify-center py-6 sm:py-8 text-xs text-slate-text/50 border-2 border-dashed border-outline-variant/10 rounded-lg"
         >
           Drop leads here
         </div>
