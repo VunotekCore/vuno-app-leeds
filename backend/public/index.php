@@ -4,7 +4,26 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // ── Serve frontend dist for non-API routes ──────────────────────
 if (!str_starts_with($uri, '/api/')) {
-  $distPath = __DIR__ . '/../../frontend/dist';
+  // Buscar dist en desarrollo o producción
+  $candidates = [
+    __DIR__ . '/../../frontend/dist',  // desarrollo local
+    __DIR__ . '/..',                    // producción (dist al lado)
+  ];
+
+  $distPath = null;
+  foreach ($candidates as $p) {
+    if (file_exists($p . '/index.html')) {
+      $distPath = $p;
+      break;
+    }
+  }
+
+  if (!$distPath) {
+    http_response_code(500);
+    echo 'Frontend build not found. Run pnpm build first.';
+    exit;
+  }
+
   $filePath = $distPath . $uri;
 
   if ($uri !== '/' && file_exists($filePath) && !is_dir($filePath)) {
