@@ -38,6 +38,7 @@ if (!str_starts_with($uri, '/api/')) {
       'jpeg' => 'image/jpeg',
       'gif'  => 'image/gif',
       'svg'  => 'image/svg+xml',
+      'webmanifest' => 'application/manifest+json',
       'ico'  => 'image/x-icon',
       'webp' => 'image/webp',
       'woff2' => 'font/woff2',
