@@ -35,6 +35,7 @@ function isActive(item) {
 }
 
 async function handleLogout() {
+  close()
   auth.logout()
   router.push({ name: 'Login' })
 }
@@ -54,6 +55,7 @@ function close() {
     <div class="flex items-center justify-between px-6 pt-6 pb-5 border-b border-outline-variant/20">
       <router-link
         :to="{ name: 'Dashboard' }"
+        @click="close"
         class="flex items-center gap-3"
       >
         <img src="/logo.webp" alt="vuno" class="h-8 w-auto" />
@@ -75,6 +77,7 @@ function close() {
         v-for="item in navItems"
         :key="item.route"
         :to="{ name: item.route }"
+        @click="close"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
         :class="isActive(item)
           ? 'bg-vue-green/10 text-vue-green border border-vue-green/20'

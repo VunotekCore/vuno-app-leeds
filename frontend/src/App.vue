@@ -17,7 +17,7 @@ function toggleSidebar() {
     <AppSidebar v-if="auth.isAuthenticated" :is-open="sidebarOpen" @toggle="toggleSidebar" />
     <main
       class="flex-1 min-h-screen transition-all duration-300"
-      :class="auth.isAuthenticated ? 'lg:ml-64' : ''"
+      :class="auth.isAuthenticated ? 'pl-14 lg:pl-0 lg:ml-64' : ''"
     >
       <button
         v-if="auth.isAuthenticated"
