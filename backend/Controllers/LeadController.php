@@ -6,6 +6,7 @@ use Core\Request;
 use Core\Response;
 use Models\Lead;
 use Models\Template;
+use Models\Category;
 use PDOException;
 
 class LeadController
@@ -17,6 +18,7 @@ class LeadController
     $filters = [
       'search'         => Request::query('search'),
       'contact_status' => Request::query('contact_status'),
+      'category_id'    => Request::query('category_id'),
     ];
 
     $result = Lead::findAll($filters, $page, $perPage);
@@ -135,13 +137,15 @@ class LeadController
     $templates = \Models\Template::findAll();
     $tiers = \Models\Tier::findAll();
     $products = \Models\Product::findAll();
+    $categories = Category::findAll();
 
     Response::success([
-      'leads'     => $leadData['leads'],
-      'counts'    => $leadData['counts'],
-      'templates' => $templates,
-      'tiers'     => $tiers,
-      'products'  => $products,
+      'leads'      => $leadData['leads'],
+      'counts'     => $leadData['counts'],
+      'templates'  => $templates,
+      'tiers'      => $tiers,
+      'products'   => $products,
+      'categories' => $categories,
     ]);
   }
 

@@ -45,6 +45,15 @@ CREATE TABLE IF NOT EXISTS templates (
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS categories (
+  id CHAR(36) PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  created_by CHAR(36) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS leads (
   id CHAR(36) PRIMARY KEY,
   store_name VARCHAR(255) NOT NULL,
@@ -54,12 +63,14 @@ CREATE TABLE IF NOT EXISTS leads (
   followers_count INT DEFAULT 0,
   tier_classification VARCHAR(50) DEFAULT NULL,
   product_id CHAR(36) DEFAULT NULL,
+  category_id CHAR(36) DEFAULT NULL,
   contact_status ENUM('Pending', 'First Contact', 'Second Contact', 'Interested', 'Client', 'Archived') NOT NULL DEFAULT 'Pending',
   contact_attempts INT NOT NULL DEFAULT 0,
   last_contact_date DATETIME DEFAULT NULL,
   created_by CHAR(36) NOT NULL,
   registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
   UNIQUE KEY uq_phone_profile (phone, profile_url),
   INDEX idx_follow_up (contact_status, last_contact_date)

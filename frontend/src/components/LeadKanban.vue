@@ -27,7 +27,8 @@ const filteredLeads = computed(() => {
     l.store_name?.toLowerCase().includes(q) ||
     l.phone?.includes(q) ||
     l.email?.toLowerCase().includes(q) ||
-    l.product_name?.toLowerCase().includes(q)
+    l.product_name?.toLowerCase().includes(q) ||
+    l.category_name?.toLowerCase().includes(q)
   )
 })
 
@@ -106,12 +107,15 @@ function toggleColumn(key) {
           </div>
 
           <!-- Body -->
-          <div v-if="lead.product_name || lead.tier_classification" class="flex flex-wrap gap-1">
+          <div v-if="lead.product_name || lead.tier_classification || lead.category_name" class="flex flex-wrap gap-1">
             <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
               {{ lead.product_name }}
             </span>
             <span v-if="lead.tier_classification" class="text-xs bg-surface-charcoal text-slate-text px-1.5 py-0.5 rounded">
               {{ lead.tier_classification }}
+            </span>
+            <span v-if="lead.category_name" class="text-xs bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded font-medium">
+              {{ lead.category_name }}
             </span>
           </div>
 
@@ -213,12 +217,15 @@ function toggleColumn(key) {
             <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
           </div>
 
-          <div v-if="lead.product_name || lead.tier_classification" class="flex flex-wrap gap-1">
+          <div v-if="lead.product_name || lead.tier_classification || lead.category_name" class="flex flex-wrap gap-1">
             <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
               {{ lead.product_name }}
             </span>
             <span v-if="lead.tier_classification" class="text-xs bg-surface-charcoal text-slate-text px-1.5 py-0.5 rounded">
               {{ lead.tier_classification }}
+            </span>
+            <span v-if="lead.category_name" class="text-xs bg-indigo-500/10 text-indigo-400 px-1.5 py-0.5 rounded font-medium">
+              {{ lead.category_name }}
             </span>
           </div>
 

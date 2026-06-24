@@ -11,6 +11,7 @@ const allLeads = ref({ prospecting: [], clients: [], archived: [] })
 const templates = ref([])
 const tiers = ref([])
 const products = ref([])
+const categories = ref([])
 const counts = reactive({ prospecting: 0, clients: 0, archived: 0 })
 const loading = ref(true)
 const search = ref('')
@@ -28,7 +29,8 @@ const leads = computed(() => {
     l.store_name?.toLowerCase().includes(q) ||
     l.phone?.includes(q) ||
     l.email?.toLowerCase().includes(q) ||
-    l.product_name?.toLowerCase().includes(q)
+    l.product_name?.toLowerCase().includes(q) ||
+    l.category_name?.toLowerCase().includes(q)
   )
 })
 
@@ -51,6 +53,7 @@ async function fetchPageData() {
     templates.value = data.data.templates
     tiers.value = data.data.tiers
     products.value = data.data.products
+    categories.value = data.data.categories
   } catch {
     //
   } finally {
@@ -216,6 +219,7 @@ onMounted(fetchPageData)
       v-if="showForm"
       :tier-mapping="tierMapping"
       :products="products"
+      :categories="categories"
       :lead="editingLead"
       @close="showForm = false; editingLead = null"
       @created="handleLeadCreated"
@@ -249,6 +253,7 @@ onMounted(fetchPageData)
       :loading="loading"
       :templates="templates"
       :products="products"
+      :categories="categories"
       :status-scope="activeTab"
       @contact="handleContact"
       @send-whats-app="handleSendWhatsApp"
