@@ -14,10 +14,15 @@ mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" ${DB_PASS:+-p"$DB_PASS"} < ../da
 echo "[2/3] Testing PHP syntax..."
 find . -name "*.php" -exec php -l {} \; | grep -v "No syntax"
 
-echo "[3/3] Starting PHP dev server..."
+echo "[3/3] Building frontend..."
+(cd ../frontend && npm run build)
+
 echo ""
-echo "  API running at: http://localhost:8000/api"
+echo "[4/4] Starting PHP dev server..."
+echo ""
+echo "  App running at: http://localhost:8000"
+echo "  API at:        http://localhost:8000/api"
 echo "  Ctrl+C to stop"
 echo ""
 
-php -S localhost:8000 -t public/
+php -S localhost:8000 -t public/ public/index.php

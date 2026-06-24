@@ -1,13 +1,13 @@
 <?php
 
+$jwtSecret = getenv('JWT_SECRET');
+if (!$jwtSecret) {
+  die('JWT_SECRET environment variable is required');
+}
+
 return [
-  'jwt_secret'      => 'JWT_SECRET_PLACEHOLDER',
-  'jwt_expiry'      => 86400,
-  'cors_origin'     => '*',
-  'country_code'    => '505',
-  'tier_mapping'    => [
-    'Tier 1' => '$50 USD',
-    'Tier 2' => '$100 USD',
-    'Tier 3' => '$200 USD',
-  ],
+  'jwt_secret'   => $jwtSecret,
+  'jwt_expiry'   => 86400,
+  'cors_origin'  => '*',
+  'country_code' => '505',
 ];

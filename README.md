@@ -9,6 +9,26 @@ Manual Lead Scraping & Management System (Agile CRM).
 - Node.js 20+
 - Composer (opcional)
 
+## Variables de entorno
+
+| Variable     | Descripción           | Obligatorio |
+|-------------|-----------------------|-------------|
+| `DB_HOST`   | Host MySQL            | No (default localhost) |
+| `DB_PORT`   | Puerto MySQL          | No (default 3306) |
+| `DB_NAME`   | Base de datos         | No (default vuno_app_leed) |
+| `DB_USER`   | Usuario MySQL         | No (default dail) |
+| `DB_PASS`   | Contraseña MySQL      | **Sí** |
+| `DB_SOCKET` | Socket MySQL (opcional) | No |
+| `JWT_SECRET`| Secreto para firmar JWT | **Sí** |
+
+Copia `backend/.env.example` y completa los valores:
+
+```bash
+cp backend/.env.example backend/.env
+# Editar .env con tus valores
+export $(grep -v '^#' backend/.env | xargs)
+```
+
 ## Setup rápido
 
 ### 1. Base de datos
@@ -27,16 +47,18 @@ mysql -u root -p < database/schema.sql
 
 Esto crea la base de datos `vuno_app_leed` con las tablas `users`, `leads`, `templates` y el usuario admin por defecto.
 
-### 2. Backend
+### 2. Backend + Frontend (producción)
 
 ```bash
 cd backend
-php -S localhost:8000 -t public/
+export JWT_SECRET=tu_secreto_aqui
+export DB_PASS=tu_password
+php -S localhost:8000 -t public/ public/index.php
 ```
 
-Configuración de BD en `backend/config/database.php`. Usa variables de entorno `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_SOCKET`.
+Esto sirve tanto la API como el frontend build en un solo puerto.
 
-### 3. Frontend
+### 3. Frontend (desarrollo)
 
 ```bash
 cd frontend

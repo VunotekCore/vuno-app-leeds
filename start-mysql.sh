@@ -31,8 +31,9 @@ if [ ! -d "$DATADIR/mysql" ]; then
 
   echo "Running database schema..."
   mysql -S "$SOCKET" -u root < "$SCRIPT_DIR/database/schema.sql"
+  MYSQL_VUNO_PASS="${MYSQL_VUNO_PASS:-MYSQL_VUNO_PASS_PLACEHOLDER}"
   mysql -S "$SOCKET" -u root -e \
-    "CREATE USER IF NOT EXISTS 'vuno'@'localhost' IDENTIFIED WITH mysql_native_password BY 'MYSQL_VUNO_PASS_PLACEHOLDER';
+    "CREATE USER IF NOT EXISTS 'vuno'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_VUNO_PASS}';
      GRANT ALL PRIVILEGES ON vuno_app_leed.* TO 'vuno'@'localhost';
      FLUSH PRIVILEGES;"
 

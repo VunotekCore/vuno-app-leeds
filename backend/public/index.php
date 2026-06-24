@@ -1,5 +1,42 @@
 <?php
 
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// ── Serve frontend dist for non-API routes ──────────────────────
+if (!str_starts_with($uri, '/api/')) {
+  $distPath = __DIR__ . '/../../frontend/dist';
+  $filePath = $distPath . $uri;
+
+  if ($uri !== '/' && file_exists($filePath) && !is_dir($filePath)) {
+    $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+    $mimeMap = [
+      'html' => 'text/html',
+      'css'  => 'text/css',
+      'js'   => 'application/javascript',
+      'json' => 'application/json',
+      'png'  => 'image/png',
+      'jpg'  => 'image/jpeg',
+      'jpeg' => 'image/jpeg',
+      'gif'  => 'image/gif',
+      'svg'  => 'image/svg+xml',
+      'ico'  => 'image/x-icon',
+      'webp' => 'image/webp',
+      'woff2' => 'font/woff2',
+      'woff'  => 'font/woff',
+      'ttf'   => 'font/ttf',
+    ];
+    $mime = $mimeMap[$ext] ?? mime_content_type($filePath) ?: 'application/octet-stream';
+    header("Content-Type: $mime");
+    readfile($filePath);
+    return;
+  }
+
+  readfile($distPath . '/index.html');
+  return;
+}
+
+// ── API routes below ────────────────────────────────────────────
+
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
