@@ -125,10 +125,9 @@ onMounted(fetchProducts)
                 <div class="flex items-center gap-2">
                   <button
                     @click="openEdit(product)"
-                    class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
                   >
-                    <Pencil class="w-3 h-3" />
-                    Edit
+                    <Pencil class="w-4 h-4" />
                   </button>
                   <button
                     @click="handleDelete(product)"
@@ -161,10 +160,9 @@ onMounted(fetchProducts)
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
           <button
             @click="openEdit(product)"
-            class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
           >
-            <Pencil class="w-3 h-3" />
-            Edit
+            <Pencil class="w-4 h-4" />
           </button>
           <button
             @click="handleDelete(product)"
