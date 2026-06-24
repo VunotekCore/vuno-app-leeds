@@ -135,66 +135,120 @@ onMounted(fetchUsers)
       <p>No users found</p>
     </div>
 
-    <div v-else class="glass-panel rounded-xl overflow-hidden">
+    <template v-else>
+    <div class="hidden lg:block glass-panel rounded-xl overflow-hidden">
       <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
-            <th class="text-left px-4 py-3 font-medium">Email</th>
-            <th class="text-left px-4 py-3 font-medium">WhatsApp API Key</th>
-            <th class="text-left px-4 py-3 font-medium">Created</th>
-            <th class="text-left px-4 py-3 font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-outline-variant/10">
-          <tr v-for="user in users" :key="user.id" class="hover:bg-surface-charcoal/50 transition">
-            <td class="px-4 py-3">
-              <span class="text-on-surface font-medium">{{ user.email }}</span>
-            </td>
-            <td class="px-4 py-3">
-              <span
-                class="inline-flex items-center gap-1 text-xs font-medium"
-                :class="user.whatsapp_apikey ? 'text-success' : 'text-slate-text'"
-              >
-                <span class="w-1.5 h-1.5 rounded-full" :class="user.whatsapp_apikey ? 'bg-success' : 'bg-slate-text'" />
-                {{ user.whatsapp_apikey ? 'Configured' : 'Not set' }}
-              </span>
-            </td>
-            <td class="px-4 py-3 text-slate-text">
-              {{ new Date(user.created_at).toLocaleDateString() }}
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-2">
-                <button
-                  @click="openApikey(user)"
-                  class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer"
-                  :class="user.whatsapp_apikey
-                    ? 'bg-vue-green/10 text-vue-green hover:bg-vue-green/20'
-                    : 'bg-warning/10 text-warning hover:bg-warning/20'"
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
+              <th class="text-left px-4 py-3 font-medium">Email</th>
+              <th class="text-left px-4 py-3 font-medium">WhatsApp API Key</th>
+              <th class="text-left px-4 py-3 font-medium">Created</th>
+              <th class="text-left px-4 py-3 font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10">
+            <tr v-for="user in users" :key="user.id" class="hover:bg-surface-charcoal/50 transition">
+              <td class="px-4 py-3">
+                <span class="text-on-surface font-medium">{{ user.email }}</span>
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="inline-flex items-center gap-1 text-xs font-medium"
+                  :class="user.whatsapp_apikey ? 'text-success' : 'text-slate-text'"
                 >
-                  <Key class="w-3 h-3" />
-                  API Key
-                </button>
-                <button
-                  @click="openEditUser(user)"
-                  class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-                >
-                  <Pencil class="w-4 h-4" />
-                </button>
-                <button
-                  v-if="user.email !== 'dail'"
-                  @click="handleDelete(user)"
-                  class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  <span class="w-1.5 h-1.5 rounded-full" :class="user.whatsapp_apikey ? 'bg-success' : 'bg-slate-text'" />
+                  {{ user.whatsapp_apikey ? 'Configured' : 'Not set' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-slate-text">
+                {{ new Date(user.created_at).toLocaleDateString() }}
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="openApikey(user)"
+                    class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer"
+                    :class="user.whatsapp_apikey
+                      ? 'bg-vue-green/10 text-vue-green hover:bg-vue-green/20'
+                      : 'bg-warning/10 text-warning hover:bg-warning/20'"
+                  >
+                    <Key class="w-3 h-3" />
+                    API Key
+                  </button>
+                  <button
+                    @click="openEditUser(user)"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+                  >
+                    <Pencil class="w-4 h-4" />
+                  </button>
+                  <button
+                    v-if="user.email !== 'dail'"
+                    @click="handleDelete(user)"
+                    class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+                  >
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Mobile/tablet: cards -->
+    <div class="lg:hidden grid gap-3 sm:grid-cols-2">
+      <div
+        v-for="user in users"
+        :key="user.id"
+        class="glass-panel rounded-xl p-4 transition hover:border-vue-green/30"
+      >
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-on-surface truncate">{{ user.email }}</p>
+            <p class="text-xs text-slate-text mt-0.5">
+              Created {{ new Date(user.created_at).toLocaleDateString() }}
+            </p>
+          </div>
+          <span
+            class="shrink-0 inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
+            :class="user.whatsapp_apikey
+              ? 'bg-success/10 text-success'
+              : 'bg-surface-charcoal text-slate-text'"
+          >
+            <span class="w-1.5 h-1.5 rounded-full" :class="user.whatsapp_apikey ? 'bg-success' : 'bg-slate-text'" />
+            {{ user.whatsapp_apikey ? 'Configured' : 'Not set' }}
+          </span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            @click="openApikey(user)"
+            class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer"
+            :class="user.whatsapp_apikey
+              ? 'bg-vue-green/10 text-vue-green hover:bg-vue-green/20'
+              : 'bg-warning/10 text-warning hover:bg-warning/20'"
+          >
+            <Key class="w-3 h-3" />
+            API Key
+          </button>
+          <button
+            @click="openEditUser(user)"
+            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+          >
+            <Pencil class="w-4 h-4" />
+          </button>
+          <button
+            v-if="user.email !== 'dail'"
+            @click="handleDelete(user)"
+            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+          >
+            <Trash2 class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+    </template>
 
     <!-- User Create/Edit Modal -->
     <div v-if="showUserForm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
