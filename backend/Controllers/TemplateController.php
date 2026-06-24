@@ -14,6 +14,17 @@ class TemplateController
     Response::success($templates);
   }
 
+  public function pageData(): void
+  {
+    $templates = Template::findAll();
+    $products = \Models\Product::findAll();
+
+    Response::success([
+      'templates' => $templates,
+      'products'  => $products,
+    ]);
+  }
+
   public function show(array $params): void
   {
     $template = Template::findById($params['id']);

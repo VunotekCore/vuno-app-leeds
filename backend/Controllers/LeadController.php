@@ -129,6 +129,22 @@ class LeadController
     ]);
   }
 
+  public function pageData(): void
+  {
+    $leadData = Lead::getPageData();
+    $templates = \Models\Template::findAll();
+    $tiers = \Models\Tier::findAll();
+    $products = \Models\Product::findAll();
+
+    Response::success([
+      'leads'     => $leadData['leads'],
+      'counts'    => $leadData['counts'],
+      'templates' => $templates,
+      'tiers'     => $tiers,
+      'products'  => $products,
+    ]);
+  }
+
   public function sendMessage(array $params): void
   {
     $lead = Lead::findById($params['id']);

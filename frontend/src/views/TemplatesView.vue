@@ -15,24 +15,16 @@ const form = ref({
   product_id: null,
 })
 
-async function fetchTemplates() {
+async function fetchPageData() {
   loading.value = true
   try {
-    const { data } = await api.get('/api/templates')
-    templates.value = data.data
+    const { data } = await api.get('/api/templates/page-data')
+    templates.value = data.data.templates
+    products.value = data.data.products
   } catch {
     //
   } finally {
     loading.value = false
-  }
-}
-
-async function fetchProducts() {
-  try {
-    const { data } = await api.get('/api/products')
-    products.value = data.data
-  } catch {
-    //
   }
 }
 
@@ -60,7 +52,7 @@ async function handleSave() {
       await api.post('/api/templates', form.value)
     }
     showForm.value = false
-    await fetchTemplates()
+    await fetchPageData()
   } catch {
     //
   }
@@ -70,16 +62,13 @@ async function handleDelete(template) {
   if (!confirm(`Delete template "${template.template_name}"?`)) return
   try {
     await api.delete(`/api/templates/${template.id}`)
-    await fetchTemplates()
+    await fetchPageData()
   } catch {
     //
   }
 }
 
-onMounted(() => {
-  fetchTemplates()
-  fetchProducts()
-})
+onMounted(fetchPageData)
 </script>
 
 <template>

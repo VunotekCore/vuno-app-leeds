@@ -205,6 +205,52 @@ class Lead
     ]);
   }
 
+  public static function getPageData(): array
+  {
+    $db = Database::getInstance();
+
+    $countStmt = $db->query(
+      "SELECT
+          COALESCE(SUM(CASE WHEN contact_status IN ('Pending','First Contact','Second Contact','Interested') THEN 1 ELSE 0 END), 0) AS prospecting,
+          COALESCE(SUM(CASE WHEN contact_status = 'Client' THEN 1 ELSE 0 END), 0) AS clients,
+          COALESCE(SUM(CASE WHEN contact_status = 'Archived' THEN 1 ELSE 0 END), 0) AS archived
+       FROM leads"
+    );
+    $counts = $countStmt->fetch();
+
+    $stmt = $db->prepare(
+      "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
+              l.followers_count, l.tier_classification, l.contact_status,
+              l.contact_attempts, l.last_contact_date, l.product_id,
+              l.created_by, l.registration_date,
+              p.name AS product_name
+       FROM leads l
+       LEFT JOIN products p ON p.id = l.product_id
+       ORDER BY l.registration_date DESC
+       LIMIT 500"
+    );
+    $stmt->execute();
+    $allLeads = $stmt->fetchAll();
+
+    $prospectingStatuses = ['Pending', 'First Contact', 'Second Contact', 'Interested'];
+    $leads = ['prospecting' => [], 'clients' => [], 'archived' => []];
+
+    foreach ($allLeads as $lead) {
+      if (in_array($lead['contact_status'], $prospectingStatuses)) {
+        $leads['prospecting'][] = $lead;
+      } elseif ($lead['contact_status'] === 'Client') {
+        $leads['clients'][] = $lead;
+      } elseif ($lead['contact_status'] === 'Archived') {
+        $leads['archived'][] = $lead;
+      }
+    }
+
+    return [
+      'leads'  => $leads,
+      'counts' => $counts,
+    ];
+  }
+
   public static function getFollowUpAlerts(): array
   {
     $db = Database::getInstance();

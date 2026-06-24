@@ -7,34 +7,30 @@ import LeadTable from '../components/LeadTable.vue'
 import LeadContactModal from '../components/LeadContactModal.vue'
 import { Plus, Search, Users, Target, Star, Archive } from '@lucide/vue'
 
-const leads = ref([])
-const total = ref(0)
-const page = ref(1)
-const perPage = 50
-const search = ref('')
-const loading = ref(true)
-const showForm = ref(false)
-const editingLead = ref(null)
-const contactingLead = ref(null)
+const allLeads = ref({ prospecting: [], clients: [], archived: [] })
 const templates = ref([])
 const tiers = ref([])
 const products = ref([])
-
+const counts = reactive({ prospecting: 0, clients: 0, archived: 0 })
+const loading = ref(true)
+const search = ref('')
 const activeTab = ref('prospecting')
+const showForm = ref(false)
+const editingLead = ref(null)
+const contactingLead = ref(null)
 
-const counts = reactive({
-  prospecting: 0,
-  clients: 0,
-  archived: 0,
+const leads = computed(() => {
+  const group = allLeads.value[activeTab.value]
+  if (!group) return []
+  if (!search.value) return group
+  const q = search.value.toLowerCase()
+  return group.filter(l =>
+    l.store_name?.toLowerCase().includes(q) ||
+    l.phone?.includes(q) ||
+    l.email?.toLowerCase().includes(q) ||
+    l.product_name?.toLowerCase().includes(q)
+  )
 })
-
-const tabFilterMap = {
-  prospecting: 'Pending,First Contact,Second Contact,Interested',
-  clients: 'Client',
-  archived: 'Archived',
-}
-
-const statusScope = computed(() => activeTab.value)
 
 const tierMapping = computed(() => {
   const map = {}
@@ -44,69 +40,21 @@ const tierMapping = computed(() => {
   return map
 })
 
-async function fetchLeads() {
+async function fetchPageData() {
   loading.value = true
   try {
-    const params = { page: 1, per_page: activeTab.value === 'prospecting' ? 200 : perPage }
-    if (search.value) params.search = search.value
-    params.contact_status = tabFilterMap[activeTab.value]
-
-    const { data } = await api.get('/api/leads', { params })
-    leads.value = data.data
-    total.value = data.meta.total
+    const { data } = await api.get('/api/leads/page-data')
+    allLeads.value = data.data.leads
+    counts.prospecting = data.data.counts.prospecting
+    counts.clients = data.data.counts.clients
+    counts.archived = data.data.counts.archived
+    templates.value = data.data.templates
+    tiers.value = data.data.tiers
+    products.value = data.data.products
   } catch {
     //
   } finally {
     loading.value = false
-    fetchCounts()
-  }
-}
-
-async function fetchCounts() {
-  try {
-    const { data } = await api.get('/api/leads', {
-      params: { per_page: 1, contact_status: tabFilterMap.prospecting },
-    })
-    counts.prospecting = data.meta.total
-  } catch { /* */ }
-  try {
-    const { data } = await api.get('/api/leads', {
-      params: { per_page: 1, contact_status: tabFilterMap.clients },
-    })
-    counts.clients = data.meta.total
-  } catch { /* */ }
-  try {
-    const { data } = await api.get('/api/leads', {
-      params: { per_page: 1, contact_status: tabFilterMap.archived },
-    })
-    counts.archived = data.meta.total
-  } catch { /* */ }
-}
-
-async function fetchTemplates() {
-  try {
-    const { data } = await api.get('/api/templates')
-    templates.value = data.data
-  } catch {
-    //
-  }
-}
-
-async function fetchTiers() {
-  try {
-    const { data } = await api.get('/api/tiers')
-    tiers.value = data.data
-  } catch {
-    //
-  }
-}
-
-async function fetchProducts() {
-  try {
-    const { data } = await api.get('/api/products')
-    products.value = data.data
-  } catch {
-    //
   }
 }
 
@@ -114,7 +62,7 @@ async function handleDelete(lead) {
   if (!confirm(`Delete lead "${lead.store_name}"?`)) return
   try {
     await api.delete(`/api/leads/${lead.id}`)
-    await fetchLeads()
+    await fetchPageData()
   } catch {
     //
   }
@@ -125,7 +73,7 @@ async function handleUpdateStatus(lead) {
     await api.put(`/api/leads/${lead.id}`, {
       contact_status: lead.contact_status,
     })
-    await fetchLeads()
+    await fetchPageData()
   } catch {
     //
   }
@@ -139,7 +87,7 @@ async function handleSendWhatsApp(lead) {
     if (data.data.wa_url) {
       window.open(data.data.wa_url, '_blank', 'noopener,noreferrer')
     }
-    await fetchLeads()
+    await fetchPageData()
   } catch {
     //
   }
@@ -148,13 +96,13 @@ async function handleSendWhatsApp(lead) {
 function handleLeadCreated() {
   showForm.value = false
   editingLead.value = null
-  fetchLeads()
+  fetchPageData()
 }
 
 function handleLeadUpdated() {
   showForm.value = false
   editingLead.value = null
-  fetchLeads()
+  fetchPageData()
 }
 
 function handleEdit(lead) {
@@ -173,29 +121,14 @@ function handleContact(lead) {
 
 function handleContactSent() {
   contactingLead.value = null
-  fetchLeads()
-}
-
-function handleSearch() {
-  page.value = 1
-  if (activeTab.value !== 'prospecting') {
-    fetchLeads()
-  }
+  fetchPageData()
 }
 
 function handleTabChange(tab) {
   activeTab.value = tab
-  page.value = 1
-  fetchLeads()
 }
 
-onMounted(() => {
-  fetchLeads()
-  fetchTemplates()
-  fetchTiers()
-  fetchProducts()
-  fetchCounts()
-})
+onMounted(fetchPageData)
 </script>
 
 <template>
@@ -273,7 +206,6 @@ onMounted(() => {
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-text" />
         <input
           v-model="search"
-          @input="handleSearch"
           placeholder="Search leads..."
           class="w-full pl-10 pr-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface placeholder-slate-text/50 focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none text-sm transition"
         />
@@ -304,7 +236,6 @@ onMounted(() => {
       :leads="leads"
       :templates="templates"
       :products="products"
-      :search="search"
       @update-status="handleUpdateStatus"
       @edit="handleEdit"
       @delete="handleDelete"
@@ -318,7 +249,7 @@ onMounted(() => {
       :loading="loading"
       :templates="templates"
       :products="products"
-      :status-scope="statusScope"
+      :status-scope="activeTab"
       @contact="handleContact"
       @send-whats-app="handleSendWhatsApp"
       @update-status="handleUpdateStatus"
