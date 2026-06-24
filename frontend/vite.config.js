@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      manifestFilename: 'manifest.json',
       includeAssets: ['**/*.{js,css,woff2,webp,png,svg}'],
       manifest: {
         name: 'VUNO LEED',
