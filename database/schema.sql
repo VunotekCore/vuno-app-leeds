@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS vuno_leeds
+CREATE DATABASE IF NOT EXISTS vuno_app_leeds
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE vuno_leeds;
+USE vuno_app_leeds;
 
 CREATE TABLE IF NOT EXISTS users (
   id CHAR(36) PRIMARY KEY,
@@ -22,13 +22,26 @@ CREATE TABLE IF NOT EXISTS tiers (
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS products (
+  id CHAR(36) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT DEFAULT NULL,
+  base_price DECIMAL(10,2) DEFAULT NULL,
+  created_by CHAR(36) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS templates (
   id CHAR(36) PRIMARY KEY,
   template_name VARCHAR(255) NOT NULL,
   message_body TEXT NOT NULL,
+  product_id CHAR(36) DEFAULT NULL,
   created_by CHAR(36) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -40,11 +53,13 @@ CREATE TABLE IF NOT EXISTS leads (
   email VARCHAR(255) DEFAULT NULL,
   followers_count INT DEFAULT 0,
   tier_classification VARCHAR(50) DEFAULT NULL,
+  product_id CHAR(36) DEFAULT NULL,
   contact_status ENUM('Pending', 'First Contact', 'Second Contact', 'Interested', 'Client', 'Archived') NOT NULL DEFAULT 'Pending',
   contact_attempts INT NOT NULL DEFAULT 0,
   last_contact_date DATETIME DEFAULT NULL,
   created_by CHAR(36) NOT NULL,
   registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
   UNIQUE KEY uq_phone_profile (phone, profile_url),
   INDEX idx_follow_up (contact_status, last_contact_date)

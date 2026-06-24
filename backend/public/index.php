@@ -89,6 +89,7 @@ use Controllers\DashboardController;
 use Controllers\LeadController;
 use Controllers\TemplateController;
 use Controllers\TierController;
+use Controllers\ProductController;
 use Controllers\UserController;
 
 $router = new Router();
@@ -117,6 +118,12 @@ $router->post('/api/tiers', [TierController::class, 'store']);
 $router->get('/api/tiers/{id}', [TierController::class, 'show']);
 $router->put('/api/tiers/{id}', [TierController::class, 'update']);
 $router->delete('/api/tiers/{id}', [TierController::class, 'destroy']);
+
+$router->get('/api/products', [ProductController::class, 'index']);
+$router->post('/api/products', [ProductController::class, 'store']);
+$router->get('/api/products/{id}', [ProductController::class, 'show']);
+$router->put('/api/products/{id}', [ProductController::class, 'update']);
+$router->delete('/api/products/{id}', [ProductController::class, 'destroy']);
 
 $router->get('/api/users', [UserController::class, 'index']);
 $router->post('/api/users', [UserController::class, 'store']);

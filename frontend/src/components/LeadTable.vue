@@ -1,10 +1,12 @@
 <script setup>
-import { Users, Smartphone, Pencil, Trash2, Loader } from '@lucide/vue'
+import { Users, Smartphone, Pencil, Trash2, Loader, RotateCcw } from '@lucide/vue'
 
 defineProps({
   leads: { type: Array, default: () => [] },
   loading: { type: Boolean, default: false },
   templates: { type: Array, default: () => [] },
+  products: { type: Array, default: () => [] },
+  statusScope: { type: String, default: 'prospecting' },
 })
 
 const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'delete'])
@@ -27,6 +29,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
           <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
             <th class="text-left px-4 py-3 font-medium">Store</th>
             <th class="text-left px-4 py-3 font-medium">Contact</th>
+            <th class="text-left px-4 py-3 font-medium">Product</th>
             <th class="text-left px-4 py-3 font-medium">Status</th>
             <th class="text-left px-4 py-3 font-medium">Tier</th>
             <th class="text-left px-4 py-3 font-medium">Template</th>
@@ -43,19 +46,39 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
               <div class="text-on-surface">{{ lead.phone ? `+${lead.phone}` : '-' }}</div>
               <div v-if="lead.email" class="text-xs text-slate-text">{{ lead.email }}</div>
             </td>
+            <td class="px-4 py-3 text-on-surface-variant text-sm">
+              <span v-if="lead.product_name" class="inline-flex items-center gap-1">
+                {{ lead.product_name }}
+              </span>
+              <span v-else class="text-slate-text">-</span>
+            </td>
             <td class="px-4 py-3">
-              <select
-                :value="lead.contact_status"
-                @change="emit('updateStatus', { ...lead, contact_status: $event.target.value })"
-                class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none cursor-pointer"
-              >
-                <option value="Pending">Pending</option>
-                <option value="First Contact">First Contact</option>
-                <option value="Second Contact">Second Contact</option>
-                <option value="Interested">Interested</option>
-                <option value="Client">Client</option>
-                <option value="Archived">Archived</option>
-              </select>
+              <template v-if="statusScope === 'archived'">
+                <span class="text-sm text-slate-text">{{ lead.contact_status }}</span>
+              </template>
+              <template v-else-if="statusScope === 'clients'">
+                <select
+                  :value="lead.contact_status"
+                  @change="emit('updateStatus', { ...lead, contact_status: $event.target.value })"
+                  class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none cursor-pointer"
+                >
+                  <option value="Client">Client</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </template>
+              <template v-else>
+                <select
+                  :value="lead.contact_status"
+                  @change="emit('updateStatus', { ...lead, contact_status: $event.target.value })"
+                  class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none cursor-pointer"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="First Contact">First Contact</option>
+                  <option value="Second Contact">Second Contact</option>
+                  <option value="Interested">Interested</option>
+                  <option value="Client">Client</option>
+                </select>
+              </template>
               <div v-if="lead.last_contact_date" class="text-xs text-slate-text mt-0.5">
                 {{ new Date(lead.last_contact_date).toLocaleDateString() }}
               </div>
@@ -69,34 +92,50 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
                 class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none"
               >
                 <option :value="null">No template</option>
-                <option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">
-                  {{ tpl.template_name }}
+                <option
+                  v-for="tpl in templates.filter(t => !t.product_id || t.product_id === lead.product_id)"
+                  :key="tpl.id"
+                  :value="tpl.id"
+                >
+                  {{ tpl.template_name }}<template v-if="tpl.product_name"> ({{ tpl.product_name }})</template>
                 </option>
               </select>
             </td>
             <td class="px-4 py-3">
               <div class="flex items-center gap-2">
-                <button
-                  @click="emit('sendWhatsApp', lead)"
-                  :disabled="!lead.selected_template_id"
-                  class="flex items-center gap-1 px-2.5 py-1.5 bg-vue-green hover:bg-node-green disabled:opacity-40 disabled:cursor-not-allowed text-forest-deep text-xs font-semibold rounded-lg transition cursor-pointer"
-                >
-                  <Smartphone class="w-3.5 h-3.5" />
-                  WhatsApp
-                </button>
-                <button
-                  @click="emit('contact', lead)"
-                  class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-                  title="Contact via modal"
-                >
-                  <Smartphone class="w-4 h-4" />
-                </button>
-                <button
-                  @click="emit('edit', lead)"
-                  class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
-                >
-                  <Pencil class="w-4 h-4" />
-                </button>
+                <template v-if="statusScope === 'archived'">
+                  <button
+                    @click="emit('updateStatus', { ...lead, contact_status: 'Pending' })"
+                    class="flex items-center gap-1 px-2.5 py-1.5 bg-surface-charcoal hover:bg-vue-green/10 text-slate-text hover:text-vue-green text-xs font-semibold rounded-lg transition cursor-pointer"
+                    title="Reactivate lead"
+                  >
+                    <RotateCcw class="w-3.5 h-3.5" />
+                    Reactivar
+                  </button>
+                </template>
+                <template v-else>
+                  <button
+                    @click="emit('sendWhatsApp', lead)"
+                    :disabled="!lead.selected_template_id"
+                    class="flex items-center gap-1 px-2.5 py-1.5 bg-vue-green hover:bg-node-green disabled:opacity-40 disabled:cursor-not-allowed text-forest-deep text-xs font-semibold rounded-lg transition cursor-pointer"
+                  >
+                    <Smartphone class="w-3.5 h-3.5" />
+                    WhatsApp
+                  </button>
+                  <button
+                    @click="emit('contact', lead)"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+                    title="Contact via modal"
+                  >
+                    <Smartphone class="w-4 h-4" />
+                  </button>
+                  <button
+                    @click="emit('edit', lead)"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+                  >
+                    <Pencil class="w-4 h-4" />
+                  </button>
+                </template>
                 <button
                   @click="emit('delete', lead)"
                   class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"

@@ -14,30 +14,44 @@ class Lead
     $params = [];
 
     if (!empty($filters['search'])) {
-      $conditions[] = '(store_name LIKE :search OR phone LIKE :search2 OR email LIKE :search3)';
+      $conditions[] = '(l.store_name LIKE :search OR l.phone LIKE :search2 OR l.email LIKE :search3)';
       $params[':search'] = "%{$filters['search']}%";
       $params[':search2'] = "%{$filters['search']}%";
       $params[':search3'] = "%{$filters['search']}%";
     }
 
     if (!empty($filters['contact_status'])) {
-      $conditions[] = 'contact_status = :contact_status';
-      $params[':contact_status'] = $filters['contact_status'];
+      $statuses = array_map('trim', explode(',', $filters['contact_status']));
+      if (count($statuses) === 1) {
+        $conditions[] = 'l.contact_status = :contact_status';
+        $params[':contact_status'] = $statuses[0];
+      } else {
+        $placeholders = [];
+        foreach ($statuses as $i => $s) {
+          $key = ":contact_status_$i";
+          $placeholders[] = $key;
+          $params[$key] = $s;
+        }
+        $conditions[] = 'l.contact_status IN (' . implode(',', $placeholders) . ')';
+      }
     }
 
     $where = count($conditions) > 0 ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-    $countStmt = $db->prepare("SELECT COUNT(*) FROM leads $where");
+    $countStmt = $db->prepare("SELECT COUNT(*) FROM leads l $where");
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
     $offset = ($page - 1) * $perPage;
-    $sql = "SELECT id, store_name, profile_url, phone, email,
-                   followers_count, tier_classification, contact_status,
-                   contact_attempts, last_contact_date,
-                   created_by, registration_date
-            FROM leads $where
-            ORDER BY registration_date DESC
+    $sql = "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
+                   l.followers_count, l.tier_classification, l.contact_status,
+                   l.contact_attempts, l.last_contact_date, l.product_id,
+                   l.created_by, l.registration_date,
+                   p.name AS product_name
+            FROM leads l
+            LEFT JOIN products p ON p.id = l.product_id
+            $where
+            ORDER BY l.registration_date DESC
             LIMIT :limit OFFSET :offset";
 
     $stmt = $db->prepare($sql);
@@ -58,11 +72,14 @@ class Lead
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT id, store_name, profile_url, phone, email,
-              followers_count, tier_classification, contact_status,
-              contact_attempts, last_contact_date,
-              created_by, registration_date
-       FROM leads WHERE id = :id LIMIT 1"
+      "SELECT l.id, l.store_name, l.profile_url, l.phone, l.email,
+              l.followers_count, l.tier_classification, l.contact_status,
+              l.contact_attempts, l.last_contact_date, l.product_id,
+              l.created_by, l.registration_date,
+              p.name AS product_name
+       FROM leads l
+       LEFT JOIN products p ON p.id = l.product_id
+       WHERE l.id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
     $lead = $stmt->fetch();
@@ -77,10 +94,10 @@ class Lead
 
     $stmt = $db->prepare(
       "INSERT INTO leads (id, store_name, profile_url, phone, email,
-                          followers_count, tier_classification, contact_status,
+                          followers_count, tier_classification, product_id, contact_status,
                           created_by)
        VALUES (:id, :store_name, :profile_url, :phone, :email,
-               :followers_count, :tier_classification, :contact_status,
+               :followers_count, :tier_classification, :product_id, :contact_status,
                :created_by)"
     );
 
@@ -92,6 +109,7 @@ class Lead
       ':email'               => $data['email'] ?? null,
       ':followers_count'     => (int)($data['followers_count'] ?? 0),
       ':tier_classification' => $data['tier_classification'] ?? null,
+      ':product_id'          => $data['product_id'] ?? null,
       ':contact_status'      => $data['contact_status'] ?? 'Pending',
       ':created_by'          => $data['created_by'],
     ]);
@@ -106,7 +124,7 @@ class Lead
     $params = [':id' => $uuid];
 
     $allowed = ['store_name', 'profile_url', 'email', 'followers_count',
-                'tier_classification', 'contact_status'];
+                'tier_classification', 'product_id', 'contact_status'];
 
     foreach ($allowed as $field) {
       if (array_key_exists($field, $data)) {
@@ -191,13 +209,15 @@ class Lead
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT id, store_name, profile_url, phone,
-              contact_status, contact_attempts, last_contact_date,
-              created_by
-       FROM leads
-       WHERE contact_status = 'First Contact'
-         AND last_contact_date <= DATE_SUB(NOW(), INTERVAL 2 DAY)
-       ORDER BY last_contact_date ASC"
+      "SELECT l.id, l.store_name, l.profile_url, l.phone,
+              l.contact_status, l.contact_attempts, l.last_contact_date,
+              l.product_id, l.created_by,
+              p.name AS product_name
+       FROM leads l
+       LEFT JOIN products p ON p.id = l.product_id
+       WHERE l.contact_status = 'First Contact'
+         AND l.last_contact_date <= DATE_SUB(NOW(), INTERVAL 2 DAY)
+       ORDER BY l.last_contact_date ASC"
     );
     $stmt->execute();
 

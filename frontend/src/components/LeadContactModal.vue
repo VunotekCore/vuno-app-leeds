@@ -18,6 +18,15 @@ const result = ref(null) // { success: true/false, message: '' }
 
 const tierPrice = computed(() => props.tierMapping[props.lead.tier_classification] || '')
 
+const filteredTemplates = computed(() => {
+  if (!props.lead.product_id) {
+    return props.templates.filter((t) => !t.product_id)
+  }
+  return props.templates.filter(
+    (t) => !t.product_id || t.product_id === props.lead.product_id
+  )
+})
+
 watch(selectedTemplateId, (id) => {
   result.value = null
   if (!id) {
@@ -32,6 +41,7 @@ watch(selectedTemplateId, (id) => {
   previewMessage.value = tpl.message_body
     .replace(/\[StoreName\]/g, props.lead.store_name)
     .replace(/\[TierPrice\]/g, tierPrice.value)
+    .replace(/\[ProductName\]/g, props.lead.product_name || '')
 })
 
 async function handleSend() {
@@ -87,6 +97,10 @@ async function handleSend() {
             <span class="text-slate-text">Tier</span>
             <span class="text-on-surface font-medium">{{ lead.tier_classification || '-' }}</span>
           </div>
+          <div class="flex justify-between">
+            <span class="text-slate-text">Product</span>
+            <span class="text-on-surface font-medium">{{ lead.product_name || '-' }}</span>
+          </div>
         </div>
 
         <div>
@@ -96,8 +110,8 @@ async function handleSend() {
             class="w-full px-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none transition"
           >
             <option :value="null">Select a template...</option>
-            <option v-for="tpl in templates" :key="tpl.id" :value="tpl.id">
-              {{ tpl.template_name }}
+            <option v-for="tpl in filteredTemplates" :key="tpl.id" :value="tpl.id">
+              {{ tpl.template_name }}<template v-if="tpl.product_name"> ({{ tpl.product_name }})</template>
             </option>
           </select>
         </div>

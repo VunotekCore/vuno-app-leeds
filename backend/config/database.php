@@ -5,7 +5,7 @@ return [
   'port'     => getenv('DB_PORT') ?: '3306',
   'dbname'   => getenv('DB_NAME') ?: 'vuno_app_leed',
   'username' => getenv('DB_USER') ?: 'dail',
-  'password' => getenv('DB_PASS'),
+  'password' => getenv('DB_PASS')? :'admin123$',
   'socket'   => getenv('DB_SOCKET') ?: '',
   'charset'  => 'utf8mb4',
 ];

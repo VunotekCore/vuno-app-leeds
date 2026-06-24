@@ -151,8 +151,9 @@ class LeadController
       $tierPrice = $tierPrices['tier_mapping'][$lead['tier_classification']] ?? '';
 
       $renderedMessage = render_template($template['message_body'], [
-        'StoreName' => $lead['store_name'],
-        'TierPrice' => $tierPrice,
+        'StoreName'   => $lead['store_name'],
+        'TierPrice'   => $tierPrice,
+        'ProductName' => $lead['product_name'] ?? '',
       ]);
     }
 

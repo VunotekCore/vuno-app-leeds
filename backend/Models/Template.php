@@ -11,9 +11,12 @@ class Template
   {
     $db = Database::getInstance();
     $stmt = $db->query(
-      "SELECT id, template_name, message_body,
-              created_by, created_at, updated_at
-       FROM templates ORDER BY created_at DESC"
+      "SELECT t.id, t.template_name, t.message_body, t.product_id,
+              t.created_by, t.created_at, t.updated_at,
+              p.name AS product_name
+       FROM templates t
+       LEFT JOIN products p ON p.id = t.product_id
+       ORDER BY t.created_at DESC"
     );
 
     return $stmt->fetchAll();
@@ -23,9 +26,12 @@ class Template
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT id, template_name, message_body,
-              created_by, created_at, updated_at
-       FROM templates WHERE id = :id LIMIT 1"
+      "SELECT t.id, t.template_name, t.message_body, t.product_id,
+              t.created_by, t.created_at, t.updated_at,
+              p.name AS product_name
+       FROM templates t
+       LEFT JOIN products p ON p.id = t.product_id
+       WHERE t.id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
 
@@ -39,14 +45,15 @@ class Template
     $uuid = uuid_v7();
 
     $stmt = $db->prepare(
-      "INSERT INTO templates (id, template_name, message_body, created_by)
-       VALUES (:id, :template_name, :message_body, :created_by)"
+      "INSERT INTO templates (id, template_name, message_body, product_id, created_by)
+       VALUES (:id, :template_name, :message_body, :product_id, :created_by)"
     );
 
     $stmt->execute([
       ':id'            => $uuid,
       ':template_name' => $data['template_name'],
       ':message_body'  => $data['message_body'],
+      ':product_id'    => $data['product_id'] ?? null,
       ':created_by'    => $data['created_by'],
     ]);
 
@@ -58,7 +65,7 @@ class Template
     $db = Database::getInstance();
     $stmt = $db->prepare(
       "UPDATE templates
-       SET template_name = :template_name, message_body = :message_body
+       SET template_name = :template_name, message_body = :message_body, product_id = :product_id
        WHERE id = :id"
     );
 
@@ -66,6 +73,7 @@ class Template
       ':id'            => $uuid,
       ':template_name' => $data['template_name'],
       ':message_body'  => $data['message_body'],
+      ':product_id'    => $data['product_id'] ?? null,
     ]);
   }
 

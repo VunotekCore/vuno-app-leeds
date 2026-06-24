@@ -6,6 +6,7 @@ import { X, AlertTriangle, Check } from '@lucide/vue'
 
 const props = defineProps({
   tierMapping: { type: Object, default: () => ({}) },
+  products: { type: Array, default: () => [] },
   lead: { type: Object, default: null },
 })
 
@@ -20,6 +21,7 @@ const form = ref({
   email: '',
   followers_count: 0,
   tier_classification: '',
+  product_id: null,
   contact_status: 'Pending',
 })
 
@@ -31,6 +33,7 @@ if (props.lead) {
     email: props.lead.email || '',
     followers_count: props.lead.followers_count || 0,
     tier_classification: props.lead.tier_classification || '',
+    product_id: props.lead.product_id || null,
     contact_status: props.lead.contact_status || 'Pending',
   }
 }
@@ -214,6 +217,19 @@ async function handleSubmit() {
             class="w-full px-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface placeholder-slate-text/50 focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none transition"
             placeholder="store@email.com"
           />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-on-surface-variant mb-1">Product</label>
+          <select
+            v-model="form.product_id"
+            class="w-full px-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none transition"
+          >
+            <option :value="null">No product</option>
+            <option v-for="p in products" :key="p.id" :value="p.id">
+              {{ p.name }}
+            </option>
+          </select>
         </div>
 
         <div class="grid grid-cols-3 gap-4">

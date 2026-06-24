@@ -6,6 +6,7 @@ import {
   Users,
   FileText,
   DollarSign,
+  Package,
   LogOut,
 } from '@lucide/vue'
 
@@ -18,6 +19,7 @@ const navItems = [
   { name: 'Leads', route: 'Leads', icon: Users },
   { name: 'Templates', route: 'Templates', icon: FileText },
   { name: 'Tiers', route: 'Tiers', icon: DollarSign },
+  { name: 'Products', route: 'Products', icon: Package },
   { name: 'Users', route: 'Users', icon: Users },
 ]
 
@@ -47,7 +49,7 @@ async function handleLogout() {
       </div>
     </router-link>
 
-    <nav class="flex-1 px-3 py-4 space-y-1">
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
       <router-link
         v-for="item in navItems"
         :key="item.route"

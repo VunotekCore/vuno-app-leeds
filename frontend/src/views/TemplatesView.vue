@@ -4,6 +4,7 @@ import api from '../services/api'
 import { FileText, Plus, Pencil, Trash2, X } from '@lucide/vue'
 
 const templates = ref([])
+const products = ref([])
 const loading = ref(true)
 const showForm = ref(false)
 const editingTemplate = ref(null)
@@ -11,6 +12,7 @@ const editingTemplate = ref(null)
 const form = ref({
   template_name: '',
   message_body: '',
+  product_id: null,
 })
 
 async function fetchTemplates() {
@@ -25,9 +27,18 @@ async function fetchTemplates() {
   }
 }
 
+async function fetchProducts() {
+  try {
+    const { data } = await api.get('/api/products')
+    products.value = data.data
+  } catch {
+    //
+  }
+}
+
 function openCreate() {
   editingTemplate.value = null
-  form.value = { template_name: '', message_body: '' }
+  form.value = { template_name: '', message_body: '', product_id: null }
   showForm.value = true
 }
 
@@ -36,6 +47,7 @@ function openEdit(template) {
   form.value = {
     template_name: template.template_name,
     message_body: template.message_body,
+    product_id: template.product_id || null,
   }
   showForm.value = true
 }
@@ -64,7 +76,10 @@ async function handleDelete(template) {
   }
 }
 
-onMounted(fetchTemplates)
+onMounted(() => {
+  fetchTemplates()
+  fetchProducts()
+})
 </script>
 
 <template>
@@ -99,7 +114,21 @@ onMounted(fetchTemplates)
         class="glass-panel rounded-xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-vue-green/5"
       >
         <div class="flex items-start justify-between mb-3">
-          <h3 class="font-semibold text-on-surface font-display">{{ template.template_name }}</h3>
+          <div>
+            <h3 class="font-semibold text-on-surface font-display">{{ template.template_name }}</h3>
+            <span
+              v-if="template.product_name"
+              class="inline-block mt-1 text-xs bg-vue-green/10 text-vue-green px-2 py-0.5 rounded-full font-medium"
+            >
+              {{ template.product_name }}
+            </span>
+            <span
+              v-else
+              class="inline-block mt-1 text-xs bg-surface-charcoal text-slate-text px-2 py-0.5 rounded-full"
+            >
+              Global
+            </span>
+          </div>
           <div class="flex gap-1">
             <button
               @click="openEdit(template)"
@@ -117,7 +146,7 @@ onMounted(fetchTemplates)
         </div>
         <p class="text-sm text-on-surface-variant whitespace-pre-wrap line-clamp-4">{{ template.message_body }}</p>
         <div class="mt-3 text-xs text-slate-text">
-          Available tags: <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code> <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code>
+          Available tags: <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code> <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code> <code class="bg-surface-charcoal px-1 rounded">[ProductName]</code>
         </div>
       </div>
     </div>
@@ -151,7 +180,22 @@ onMounted(fetchTemplates)
               placeholder="Hi [StoreName], we have a special [TierPrice] offer for you!"
             />
             <p class="text-xs text-slate-text mt-1">
-              Use <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code> and <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code> as placeholders.
+              Use <code class="bg-surface-charcoal px-1 rounded">[StoreName]</code>, <code class="bg-surface-charcoal px-1 rounded">[TierPrice]</code> and <code class="bg-surface-charcoal px-1 rounded">[ProductName]</code> as placeholders.
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-on-surface-variant mb-1">Product (optional)</label>
+            <select
+              v-model="form.product_id"
+              class="w-full px-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none transition"
+            >
+              <option :value="null">Global template</option>
+              <option v-for="p in products" :key="p.id" :value="p.id">
+                {{ p.name }}
+              </option>
+            </select>
+            <p class="text-xs text-slate-text mt-1">
+              Leave as "Global" to make this template available for all leads.
             </p>
           </div>
         </div>
