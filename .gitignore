@@ -8,3 +8,4 @@ dist/
 .agents/
 /backend/public/dist/
 backend/.env.example
+backend/leeds.db
