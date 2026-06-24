@@ -101,6 +101,7 @@ $router->get('/api/dashboard', [DashboardController::class, 'index']);
 
 $router->get('/api/leads', [LeadController::class, 'index']);
 $router->post('/api/leads', [LeadController::class, 'store']);
+$router->get('/api/leads/page-data', [LeadController::class, 'pageData']);
 $router->get('/api/leads/check-duplicate', [LeadController::class, 'checkDuplicate']);
 $router->get('/api/leads/{id}', [LeadController::class, 'show']);
 $router->put('/api/leads/{id}', [LeadController::class, 'update']);
@@ -109,6 +110,7 @@ $router->post('/api/leads/{id}/send', [LeadController::class, 'sendMessage']);
 
 $router->get('/api/templates', [TemplateController::class, 'index']);
 $router->post('/api/templates', [TemplateController::class, 'store']);
+$router->get('/api/templates/page-data', [TemplateController::class, 'pageData']);
 $router->get('/api/templates/{id}', [TemplateController::class, 'show']);
 $router->put('/api/templates/{id}', [TemplateController::class, 'update']);
 $router->delete('/api/templates/{id}', [TemplateController::class, 'destroy']);
