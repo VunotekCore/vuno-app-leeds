@@ -94,20 +94,71 @@ onMounted(fetchProducts)
       <p>No products yet. Create your first product.</p>
     </div>
 
-    <div v-else class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <template v-else>
+    <!-- Desktop: table -->
+    <div class="hidden lg:block glass-panel rounded-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
+              <th class="text-left px-4 py-3 font-medium">Name</th>
+              <th class="text-left px-4 py-3 font-medium">Description</th>
+              <th class="text-left px-4 py-3 font-medium">Base Price</th>
+              <th class="text-left px-4 py-3 font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10">
+            <tr v-for="product in products" :key="product.id" class="hover:bg-surface-charcoal/50 transition">
+              <td class="px-4 py-3">
+                <span class="text-on-surface font-medium">{{ product.name }}</span>
+              </td>
+              <td class="px-4 py-3 text-sm text-on-surface-variant max-w-xs truncate">
+                {{ product.description || '-' }}
+              </td>
+              <td class="px-4 py-3 text-on-surface-variant">
+                <span v-if="product.base_price" class="font-medium text-vue-green">
+                  ${{ parseFloat(product.base_price).toFixed(2) }} USD
+                </span>
+                <span v-else class="text-slate-text">-</span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="openEdit(product)"
+                    class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-vue-green/10 text-vue-green hover:bg-vue-green/20 rounded-lg transition cursor-pointer"
+                  >
+                    <Pencil class="w-3 h-3" />
+                    Edit
+                  </button>
+                  <button
+                    @click="handleDelete(product)"
+                    class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+                  >
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile/tablet: cards -->
+    <div class="lg:hidden grid gap-3 sm:grid-cols-2">
       <div
         v-for="product in products"
         :key="product.id"
-        class="glass-panel rounded-xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-vue-green/5"
+        class="glass-panel rounded-xl p-4 transition hover:border-vue-green/30"
       >
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-semibold text-on-surface font-display text-lg">{{ product.name }}</h3>
-            <p v-if="product.base_price" class="text-2xl font-bold text-vue-green mt-1 font-display">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="min-w-0 flex-1">
+            <h3 class="text-sm font-semibold text-on-surface font-display truncate">{{ product.name }}</h3>
+            <p v-if="product.base_price" class="text-lg font-bold text-vue-green mt-0.5 font-display">
               ${{ parseFloat(product.base_price).toFixed(2) }} USD
             </p>
           </div>
-          <div class="flex gap-1">
+          <div class="flex gap-1 shrink-0">
             <button
               @click="openEdit(product)"
               class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
@@ -122,9 +173,10 @@ onMounted(fetchProducts)
             </button>
           </div>
         </div>
-        <p v-if="product.description" class="text-sm text-on-surface-variant line-clamp-3">{{ product.description }}</p>
+        <p v-if="product.description" class="text-xs text-on-surface-variant line-clamp-2">{{ product.description }}</p>
       </div>
     </div>
+    </template>
 
     <div v-if="showForm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div class="glass-panel rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
