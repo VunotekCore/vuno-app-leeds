@@ -5,6 +5,7 @@ import LeadForm from '../components/LeadForm.vue'
 import LeadKanban from '../components/LeadKanban.vue'
 import LeadTable from '../components/LeadTable.vue'
 import LeadContactModal from '../components/LeadContactModal.vue'
+import LeadNotesModal from '../components/LeadNotesModal.vue'
 import { Plus, Search, Users, Target, Star, Archive } from '@lucide/vue'
 
 const allLeads = ref({ prospecting: [], clients: [], archived: [] })
@@ -19,6 +20,7 @@ const activeTab = ref('prospecting')
 const showForm = ref(false)
 const editingLead = ref(null)
 const contactingLead = ref(null)
+const noteTakingLead = ref(null)
 
 const leads = computed(() => {
   const group = allLeads.value[activeTab.value]
@@ -120,6 +122,14 @@ function handleNewLead() {
 
 function handleContact(lead) {
   contactingLead.value = lead
+}
+
+function handleNotes(lead) {
+  noteTakingLead.value = lead
+}
+
+function handleNotesClose() {
+  noteTakingLead.value = null
 }
 
 function handleContactSent() {
@@ -226,6 +236,12 @@ onMounted(fetchPageData)
       @updated="handleLeadUpdated"
     />
 
+    <LeadNotesModal
+      v-if="noteTakingLead"
+      :lead="noteTakingLead"
+      @close="handleNotesClose"
+    />
+
     <LeadContactModal
       v-if="contactingLead"
       :lead="contactingLead"
@@ -244,6 +260,7 @@ onMounted(fetchPageData)
       @edit="handleEdit"
       @delete="handleDelete"
       @contact="handleContact"
+      @notes="handleNotes"
       @send-whats-app="handleSendWhatsApp"
     />
 
@@ -256,6 +273,7 @@ onMounted(fetchPageData)
       :categories="categories"
       :status-scope="activeTab"
       @contact="handleContact"
+      @notes="handleNotes"
       @send-whats-app="handleSendWhatsApp"
       @update-status="handleUpdateStatus"
       @edit="handleEdit"

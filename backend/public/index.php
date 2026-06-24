@@ -93,6 +93,7 @@ use Controllers\TierController;
 use Controllers\ProductController;
 use Controllers\CategoryController;
 use Controllers\UserController;
+use Controllers\LeadNoteController;
 
 $router = new Router();
 
@@ -109,6 +110,9 @@ $router->get('/api/leads/{id}', [LeadController::class, 'show']);
 $router->put('/api/leads/{id}', [LeadController::class, 'update']);
 $router->delete('/api/leads/{id}', [LeadController::class, 'destroy']);
 $router->post('/api/leads/{id}/send', [LeadController::class, 'sendMessage']);
+$router->get('/api/leads/{id}/notes', [LeadNoteController::class, 'index']);
+$router->post('/api/leads/{id}/notes', [LeadNoteController::class, 'store']);
+$router->delete('/api/leads/{id}/notes/{noteId}', [LeadNoteController::class, 'destroy']);
 
 $router->get('/api/templates', [TemplateController::class, 'index']);
 $router->post('/api/templates', [TemplateController::class, 'store']);

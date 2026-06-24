@@ -304,4 +304,31 @@ class Lead
 
     return $stmt->fetch();
   }
+
+  public static function getMonetaryProjection(): array
+  {
+    $db = Database::getInstance();
+
+    $stmt = $db->query(
+      "SELECT
+         l.contact_status,
+         COUNT(*) AS count,
+         COALESCE(SUM(t.price), 0) AS total_value
+       FROM leads l
+       LEFT JOIN tiers t ON t.name = l.tier_classification
+       GROUP BY l.contact_status
+       ORDER BY FIELD(l.contact_status,
+         'Pending', 'First Contact', 'Second Contact',
+         'Interested', 'Client', 'Archived')"
+    );
+
+    $rows = $stmt->fetchAll();
+
+    $grandTotal = array_sum(array_column($rows, 'total_value'));
+
+    return [
+      'breakdown' => $rows,
+      'grand_total' => $grandTotal,
+    ];
+  }
 }

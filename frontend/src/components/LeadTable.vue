@@ -1,5 +1,5 @@
 <script setup>
-import { Users, Smartphone, Pencil, Trash2, Loader, RotateCcw } from '@lucide/vue'
+import { Users, Smartphone, Pencil, Trash2, Loader, RotateCcw, FileText } from '@lucide/vue'
 
 defineProps({
   leads: { type: Array, default: () => [] },
@@ -10,7 +10,7 @@ defineProps({
   statusScope: { type: String, default: 'prospecting' },
 })
 
-const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'delete'])
+const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'delete', 'notes'])
 </script>
 
 <template>
@@ -114,6 +114,13 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
               <div class="flex items-center gap-2">
                 <template v-if="statusScope === 'archived'">
                   <button
+                    @click="emit('notes', lead)"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+                    title="Notes"
+                  >
+                    <FileText class="w-4 h-4" />
+                  </button>
+                  <button
                     @click="emit('updateStatus', { ...lead, contact_status: 'Pending' })"
                     class="flex items-center gap-1 px-2.5 py-1.5 bg-surface-charcoal hover:bg-vue-green/10 text-slate-text hover:text-vue-green text-xs font-semibold rounded-lg transition cursor-pointer"
                     title="Reactivate lead"
@@ -123,6 +130,13 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
                   </button>
                 </template>
                 <template v-else>
+                  <button
+                    @click="emit('notes', lead)"
+                    class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+                    title="Notes"
+                  >
+                    <FileText class="w-4 h-4" />
+                  </button>
                   <button
                     @click="emit('sendWhatsApp', lead)"
                     :disabled="!lead.selected_template_id"
@@ -219,6 +233,13 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
 
         <!-- Footer -->
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+          <button
+            @click="emit('notes', lead)"
+            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            title="Notes"
+          >
+            <FileText class="w-4 h-4" />
+          </button>
           <template v-if="statusScope === 'archived'">
             <button
               @click="emit('updateStatus', { ...lead, contact_status: 'Pending' })"
