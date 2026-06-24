@@ -7,7 +7,7 @@ if (!str_starts_with($uri, '/api/')) {
   // Buscar dist en desarrollo o producción
   $candidates = [
     __DIR__ . '/../../frontend/dist',  // desarrollo local
-    __DIR__ . '/..',                    // producción (dist al lado)
+    __DIR__ . '/../..',                 // producción (dist está en leeds/)
   ];
 
   $distPath = null;
