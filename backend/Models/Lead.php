@@ -32,10 +32,10 @@ class Lead
     $total = (int)$countStmt->fetchColumn();
 
     $offset = ($page - 1) * $perPage;
-    $sql = "SELECT BIN_TO_UUID(id) AS id, store_name, profile_url, phone, email,
+    $sql = "SELECT id, store_name, profile_url, phone, email,
                    followers_count, tier_classification, contact_status,
                    contact_attempts, last_contact_date,
-                   BIN_TO_UUID(created_by) AS created_by, registration_date
+                   created_by, registration_date
             FROM leads $where
             ORDER BY registration_date DESC
             LIMIT :limit OFFSET :offset";
@@ -58,11 +58,11 @@ class Lead
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, store_name, profile_url, phone, email,
+      "SELECT id, store_name, profile_url, phone, email,
               followers_count, tier_classification, contact_status,
               contact_attempts, last_contact_date,
-              BIN_TO_UUID(created_by) AS created_by, registration_date
-       FROM leads WHERE id = UUID_TO_BIN(:id) LIMIT 1"
+              created_by, registration_date
+       FROM leads WHERE id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
     $lead = $stmt->fetch();
@@ -79,9 +79,9 @@ class Lead
       "INSERT INTO leads (id, store_name, profile_url, phone, email,
                           followers_count, tier_classification, contact_status,
                           created_by)
-       VALUES (UUID_TO_BIN(:id), :store_name, :profile_url, :phone, :email,
+       VALUES (:id, :store_name, :profile_url, :phone, :email,
                :followers_count, :tier_classification, :contact_status,
-               UUID_TO_BIN(:created_by))"
+               :created_by)"
     );
 
     $stmt->execute([
@@ -124,7 +124,7 @@ class Lead
       return false;
     }
 
-    $sql = "UPDATE leads SET " . implode(', ', $fields) . " WHERE id = UUID_TO_BIN(:id)";
+    $sql = "UPDATE leads SET " . implode(', ', $fields) . " WHERE id = :id";
     $stmt = $db->prepare($sql);
 
     return $stmt->execute($params);
@@ -133,7 +133,7 @@ class Lead
   public static function delete(string $uuid): bool
   {
     $db = Database::getInstance();
-    $stmt = $db->prepare("DELETE FROM leads WHERE id = UUID_TO_BIN(:id)");
+    $stmt = $db->prepare("DELETE FROM leads WHERE id = :id");
     $stmt->execute([':id' => $uuid]);
 
     return $stmt->rowCount() > 0;
@@ -143,7 +143,7 @@ class Lead
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, store_name, phone, profile_url
+      "SELECT id, store_name, phone, profile_url
        FROM leads
        WHERE phone = :phone AND profile_url = :profile_url
        LIMIT 1"
@@ -178,7 +178,7 @@ class Lead
        SET contact_status = :status,
            contact_attempts = contact_attempts + 1,
            last_contact_date = CURRENT_TIMESTAMP
-       WHERE id = UUID_TO_BIN(:id)"
+       WHERE id = :id"
     );
 
     return $stmt->execute([
@@ -191,9 +191,9 @@ class Lead
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, store_name, profile_url, phone,
+      "SELECT id, store_name, profile_url, phone,
               contact_status, contact_attempts, last_contact_date,
-              BIN_TO_UUID(created_by) AS created_by
+              created_by
        FROM leads
        WHERE contact_status = 'First Contact'
          AND last_contact_date <= DATE_SUB(NOW(), INTERVAL 2 DAY)

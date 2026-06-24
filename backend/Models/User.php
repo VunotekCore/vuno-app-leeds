@@ -11,7 +11,7 @@ class User
   {
     $db = Database::getInstance();
     $stmt = $db->query(
-      "SELECT BIN_TO_UUID(id) AS id, email, whatsapp_apikey, created_at
+      "SELECT id, email, whatsapp_apikey, created_at
        FROM users ORDER BY created_at DESC"
     );
     return $stmt->fetchAll();
@@ -21,7 +21,7 @@ class User
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, email, password, whatsapp_apikey, created_at
+      "SELECT id, email, password, whatsapp_apikey, created_at
        FROM users WHERE email = :email LIMIT 1"
     );
     $stmt->execute([':email' => $email]);
@@ -34,8 +34,8 @@ class User
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, email, whatsapp_apikey, created_at
-       FROM users WHERE id = UUID_TO_BIN(:id) LIMIT 1"
+      "SELECT id, email, whatsapp_apikey, created_at
+       FROM users WHERE id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
     $user = $stmt->fetch();
@@ -55,7 +55,7 @@ class User
 
     $stmt = $db->prepare(
       "INSERT INTO users (id, email, password)
-       VALUES (UUID_TO_BIN(:id), :email, :password)"
+       VALUES (:id, :email, :password)"
     );
 
     $stmt->execute([
@@ -85,7 +85,7 @@ class User
 
     if (empty($fields)) return false;
 
-    $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = UUID_TO_BIN(:id)";
+    $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = :id";
     $stmt = $db->prepare($sql);
     return $stmt->execute($params);
   }
@@ -93,7 +93,7 @@ class User
   public static function delete(string $uuid): bool
   {
     $db = Database::getInstance();
-    $stmt = $db->prepare("DELETE FROM users WHERE id = UUID_TO_BIN(:id)");
+    $stmt = $db->prepare("DELETE FROM users WHERE id = :id");
     $stmt->execute([':id' => $uuid]);
     return $stmt->rowCount() > 0;
   }
@@ -102,7 +102,7 @@ class User
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "UPDATE users SET whatsapp_apikey = :apikey WHERE id = UUID_TO_BIN(:id)"
+      "UPDATE users SET whatsapp_apikey = :apikey WHERE id = :id"
     );
     return $stmt->execute([
       ':id'     => $uuid,

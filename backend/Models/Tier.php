@@ -11,8 +11,8 @@ class Tier
   {
     $db = Database::getInstance();
     $stmt = $db->query(
-      "SELECT BIN_TO_UUID(id) AS id, name, price,
-              BIN_TO_UUID(created_by) AS created_by, created_at, updated_at
+      "SELECT id, name, price,
+              created_by, created_at, updated_at
        FROM tiers ORDER BY price ASC"
     );
 
@@ -23,9 +23,9 @@ class Tier
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, name, price,
-              BIN_TO_UUID(created_by) AS created_by, created_at, updated_at
-       FROM tiers WHERE id = UUID_TO_BIN(:id) LIMIT 1"
+      "SELECT id, name, price,
+              created_by, created_at, updated_at
+       FROM tiers WHERE id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
 
@@ -40,7 +40,7 @@ class Tier
 
     $stmt = $db->prepare(
       "INSERT INTO tiers (id, name, price, created_by)
-       VALUES (UUID_TO_BIN(:id), :name, :price, UUID_TO_BIN(:created_by))"
+       VALUES (:id, :name, :price, :created_by)"
     );
 
     $stmt->execute([
@@ -59,7 +59,7 @@ class Tier
     $stmt = $db->prepare(
       "UPDATE tiers
        SET name = :name, price = :price
-       WHERE id = UUID_TO_BIN(:id)"
+       WHERE id = :id"
     );
 
     return $stmt->execute([
@@ -72,7 +72,7 @@ class Tier
   public static function delete(string $uuid): bool
   {
     $db = Database::getInstance();
-    $stmt = $db->prepare("DELETE FROM tiers WHERE id = UUID_TO_BIN(:id)");
+    $stmt = $db->prepare("DELETE FROM tiers WHERE id = :id");
     $stmt->execute([':id' => $uuid]);
 
     return $stmt->rowCount() > 0;

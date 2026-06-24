@@ -11,8 +11,8 @@ class Template
   {
     $db = Database::getInstance();
     $stmt = $db->query(
-      "SELECT BIN_TO_UUID(id) AS id, template_name, message_body,
-              BIN_TO_UUID(created_by) AS created_by, created_at, updated_at
+      "SELECT id, template_name, message_body,
+              created_by, created_at, updated_at
        FROM templates ORDER BY created_at DESC"
     );
 
@@ -23,9 +23,9 @@ class Template
   {
     $db = Database::getInstance();
     $stmt = $db->prepare(
-      "SELECT BIN_TO_UUID(id) AS id, template_name, message_body,
-              BIN_TO_UUID(created_by) AS created_by, created_at, updated_at
-       FROM templates WHERE id = UUID_TO_BIN(:id) LIMIT 1"
+      "SELECT id, template_name, message_body,
+              created_by, created_at, updated_at
+       FROM templates WHERE id = :id LIMIT 1"
     );
     $stmt->execute([':id' => $uuid]);
 
@@ -40,7 +40,7 @@ class Template
 
     $stmt = $db->prepare(
       "INSERT INTO templates (id, template_name, message_body, created_by)
-       VALUES (UUID_TO_BIN(:id), :template_name, :message_body, UUID_TO_BIN(:created_by))"
+       VALUES (:id, :template_name, :message_body, :created_by)"
     );
 
     $stmt->execute([
@@ -59,7 +59,7 @@ class Template
     $stmt = $db->prepare(
       "UPDATE templates
        SET template_name = :template_name, message_body = :message_body
-       WHERE id = UUID_TO_BIN(:id)"
+       WHERE id = :id"
     );
 
     return $stmt->execute([
@@ -72,7 +72,7 @@ class Template
   public static function delete(string $uuid): bool
   {
     $db = Database::getInstance();
-    $stmt = $db->prepare("DELETE FROM templates WHERE id = UUID_TO_BIN(:id)");
+    $stmt = $db->prepare("DELETE FROM templates WHERE id = :id");
     $stmt->execute([':id' => $uuid]);
 
     return $stmt->rowCount() > 0;
