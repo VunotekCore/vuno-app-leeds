@@ -1,5 +1,5 @@
 <script setup>
-import { Users, Smartphone, Pencil, Trash2, Loader, RotateCcw, FileText } from '@lucide/vue'
+import { Users, Smartphone, Pencil, Trash2, Loader, RotateCcw, FileText, Mail } from '@lucide/vue'
 
 defineProps({
   leads: { type: Array, default: () => [] },
@@ -25,7 +25,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
     </div>
 
     <template v-else>
-    <div class="hidden lg:block overflow-x-auto">
+    <div class="hidden md:block overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
           <tr class="bg-surface-container text-slate-text text-xs uppercase tracking-wider">
@@ -33,9 +33,9 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
             <th class="text-left px-4 py-3 font-medium">Contact</th>
             <th class="text-left px-4 py-3 font-medium hidden md:table-cell">Product</th>
             <th class="text-left px-4 py-3 font-medium">Status</th>
-            <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Tier</th>
+            <th class="text-left px-4 py-3 font-medium hidden md:table-cell">Tier</th>
             <th class="text-left px-4 py-3 font-medium hidden xl:table-cell">Category</th>
-            <th class="text-left px-4 py-3 font-medium hidden lg:table-cell">Template</th>
+            <th class="text-left px-4 py-3 font-medium hidden md:table-cell">Template</th>
             <th class="text-left px-4 py-3 font-medium">Actions</th>
           </tr>
         </thead>
@@ -86,7 +86,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
                 {{ new Date(lead.last_contact_date).toLocaleDateString() }}
               </div>
             </td>
-            <td class="px-4 py-3 text-on-surface-variant hidden lg:table-cell">
+            <td class="px-4 py-3 text-on-surface-variant hidden md:table-cell">
               {{ lead.tier_classification || '-' }}
             </td>
             <td class="px-4 py-3 text-on-surface-variant hidden xl:table-cell">
@@ -95,7 +95,7 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
               </span>
               <span v-else class="text-slate-text">-</span>
             </td>
-            <td class="px-4 py-3 hidden lg:table-cell">
+            <td class="px-4 py-3 hidden md:table-cell">
               <select
                 v-model="lead.selected_template_id"
                 class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded px-2 py-1 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none"
@@ -146,7 +146,15 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
                     WhatsApp
                   </button>
                   <button
-                    @click="emit('contact', lead)"
+                    @click="emit('contact', lead, 'email')"
+                    :disabled="!lead.email || !lead.selected_template_id"
+                    class="p-1.5 text-slate-text hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                    title="Send Email"
+                  >
+                    <Mail class="w-4 h-4" />
+                  </button>
+                  <button
+                    @click="emit('contact', lead, 'whatsapp')"
                     class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
                     title="Contact via modal"
                   >
@@ -172,8 +180,8 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
       </table>
     </div>
 
-    <!-- Mobile/tablet: cards -->
-    <div class="lg:hidden grid gap-3">
+    <!-- Mobile: cards -->
+    <div class="md:hidden grid gap-3">
       <div
         v-for="lead in leads"
         :key="lead.id"
@@ -211,7 +219,29 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
           </span>
         </div>
 
-        <!-- Template select (clients) or archived status -->
+        <!-- Status (prospecting/clients) -->
+        <div v-if="statusScope !== 'archived'" class="mb-2">
+          <select
+            :value="lead.contact_status"
+            @change="emit('updateStatus', { ...lead, contact_status: $event.target.value })"
+            class="w-full text-xs bg-surface-charcoal border border-outline-variant/30 rounded-lg px-3 py-2 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none cursor-pointer"
+            :class="lead.contact_status === 'Client' ? 'text-vue-green font-medium' : ''"
+          >
+            <template v-if="statusScope === 'clients'">
+              <option value="Client">Client</option>
+              <option value="Archived">Archived</option>
+            </template>
+            <template v-else>
+              <option value="Pending">Pending</option>
+              <option value="First Contact">First Contact</option>
+              <option value="Second Contact">Second Contact</option>
+              <option value="Interested">Interested</option>
+              <option value="Client">Client</option>
+            </template>
+          </select>
+        </div>
+
+        <!-- Template select or archived status -->
         <div v-if="statusScope === 'archived'" class="text-xs text-slate-text mb-3">
           Status: {{ lead.contact_status }}
         </div>
@@ -235,59 +265,58 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
           <button
             @click="emit('notes', lead)"
-            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
             title="Notes"
           >
-            <FileText class="w-4 h-4" />
+            <FileText class="w-5 h-5" />
           </button>
           <template v-if="statusScope === 'archived'">
             <button
               @click="emit('updateStatus', { ...lead, contact_status: 'Pending' })"
-              class="flex items-center gap-1 px-3 py-1.5 bg-surface-charcoal hover:bg-vue-green/10 text-slate-text hover:text-vue-green text-xs font-semibold rounded-lg transition cursor-pointer"
+              class="flex items-center gap-1.5 px-4 py-2.5 bg-surface-charcoal hover:bg-vue-green/10 text-slate-text hover:text-vue-green text-sm font-semibold rounded-lg transition cursor-pointer"
             >
-              <RotateCcw class="w-3.5 h-3.5" />
+              <RotateCcw class="w-4 h-4" />
               Reactivar
             </button>
           </template>
           <template v-else>
-            <select
-              :value="lead.contact_status"
-              @change="emit('updateStatus', { ...lead, contact_status: $event.target.value })"
-              class="text-xs bg-surface-charcoal border border-outline-variant/30 rounded-lg px-2 py-1.5 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none cursor-pointer"
-              :class="lead.contact_status === 'Client' ? 'text-vue-green font-medium' : ''"
-            >
-              <option value="Client">Client</option>
-              <option value="Archived">Archived</option>
-            </select>
             <button
               @click="emit('sendWhatsApp', lead)"
               :disabled="!lead.selected_template_id"
-              class="flex items-center gap-1 px-3 py-1.5 bg-vue-green hover:bg-node-green disabled:opacity-40 disabled:cursor-not-allowed text-forest-deep text-xs font-semibold rounded-lg transition cursor-pointer"
+              class="flex items-center gap-1.5 px-4 py-2.5 bg-vue-green hover:bg-node-green disabled:opacity-40 disabled:cursor-not-allowed text-forest-deep text-sm font-semibold rounded-lg transition cursor-pointer"
             >
-              <Smartphone class="w-3.5 h-3.5" />
+              <Smartphone class="w-4 h-4" />
               WA
             </button>
             <button
-              @click="emit('contact', lead)"
-              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+              @click="emit('contact', lead, 'email')"
+              :disabled="!lead.email || !lead.selected_template_id"
+              class="p-2.5 text-slate-text hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Send Email"
+            >
+              <Mail class="w-5 h-5" />
+            </button>
+            <button
+              @click="emit('contact', lead, 'whatsapp')"
+              class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Contact via modal"
             >
-              <Smartphone class="w-4 h-4" />
+              <Smartphone class="w-5 h-5" />
             </button>
           </template>
           <button
             @click="emit('edit', lead)"
-            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
             title="Edit"
           >
-            <Pencil class="w-4 h-4" />
+            <Pencil class="w-5 h-5" />
           </button>
           <button
             @click="emit('delete', lead)"
-            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
             title="Delete"
           >
-            <Trash2 class="w-4 h-4" />
+            <Trash2 class="w-5 h-5" />
           </button>
         </div>
       </div>

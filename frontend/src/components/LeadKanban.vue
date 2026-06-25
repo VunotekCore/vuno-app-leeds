@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import {
-  Smartphone, Pencil, Trash2, MessageSquare, ChevronDown, ChevronRight, FileText,
+  Smartphone, Pencil, Trash2, MessageSquare, ChevronDown, ChevronRight, FileText, Mail,
 } from '@lucide/vue'
 
 const props = defineProps({
@@ -132,43 +132,68 @@ function toggleColumn(key) {
             </span>
           </div>
 
+          <!-- Template select -->
+          <div>
+            <select
+              v-model="lead.selected_template_id"
+              class="w-full text-xs bg-surface-charcoal border border-outline-variant/30 rounded-lg px-2 py-1.5 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none"
+            >
+              <option :value="null">No template</option>
+              <option
+                v-for="tpl in templates.filter(t => !t.product_id || t.product_id === lead.product_id)"
+                :key="tpl.id"
+                :value="tpl.id"
+              >
+                {{ tpl.template_name }}<template v-if="tpl.product_name"> ({{ tpl.product_name }})</template>
+              </option>
+            </select>
+          </div>
+
           <!-- Footer -->
-          <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-outline-variant/10">
             <button
               @click.stop="emit('notes', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Notes"
             >
-              <FileText class="w-3.5 h-3.5" />
+              <FileText class="w-4 h-4" />
             </button>
             <button
               @click.stop="emit('sendWhatsApp', lead)"
               :disabled="!lead.selected_template_id"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               title="Send WhatsApp"
             >
-              <Smartphone class="w-3.5 h-3.5" />
+              <Smartphone class="w-4 h-4" />
             </button>
             <button
-              @click.stop="emit('contact', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              @click.stop="emit('contact', lead, 'email')"
+              :disabled="!lead.email || !lead.selected_template_id"
+              class="p-1.5 text-slate-text hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Send Email"
+            >
+              <Mail class="w-4 h-4" />
+            </button>
+            <button
+              @click.stop="emit('contact', lead, 'whatsapp')"
+              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Contact modal"
             >
-              <MessageSquare class="w-3.5 h-3.5" />
+              <MessageSquare class="w-4 h-4" />
             </button>
             <button
               @click.stop="emit('edit', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Edit"
             >
-              <Pencil class="w-3.5 h-3.5" />
+              <Pencil class="w-4 h-4" />
             </button>
             <button
               @click.stop="emit('delete', lead)"
-              class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
+              class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
               title="Delete"
             >
-              <Trash2 class="w-3.5 h-3.5" />
+              <Trash2 class="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -249,42 +274,67 @@ function toggleColumn(key) {
             </span>
           </div>
 
-          <div class="flex items-center justify-end gap-1 pt-2 border-t border-outline-variant/10">
+          <!-- Template select -->
+          <div>
+            <select
+              v-model="lead.selected_template_id"
+              class="w-full text-xs bg-surface-charcoal border border-outline-variant/30 rounded-lg px-2 py-1.5 text-on-surface focus:ring-2 focus:ring-vue-green/40 outline-none"
+            >
+              <option :value="null">No template</option>
+              <option
+                v-for="tpl in templates.filter(t => !t.product_id || t.product_id === lead.product_id)"
+                :key="tpl.id"
+                :value="tpl.id"
+              >
+                {{ tpl.template_name }}<template v-if="tpl.product_name"> ({{ tpl.product_name }})</template>
+              </option>
+            </select>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-outline-variant/10">
             <button
               @click.stop="emit('notes', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Notes"
             >
-              <FileText class="w-3.5 h-3.5" />
+              <FileText class="w-5 h-5" />
             </button>
             <button
               @click.stop="emit('sendWhatsApp', lead)"
               :disabled="!lead.selected_template_id"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               title="Send WhatsApp"
             >
-              <Smartphone class="w-3.5 h-3.5" />
+              <Smartphone class="w-5 h-5" />
             </button>
             <button
-              @click.stop="emit('contact', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              @click.stop="emit('contact', lead, 'email')"
+              :disabled="!lead.email || !lead.selected_template_id"
+              class="p-2.5 text-slate-text hover:text-blue-400 rounded-lg hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              title="Send Email"
+            >
+              <Mail class="w-5 h-5" />
+            </button>
+            <button
+              @click.stop="emit('contact', lead, 'whatsapp')"
+              class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Contact modal"
             >
-              <MessageSquare class="w-3.5 h-3.5" />
+              <MessageSquare class="w-5 h-5" />
             </button>
             <button
               @click.stop="emit('edit', lead)"
-              class="p-1 text-slate-text hover:text-vue-green rounded hover:bg-vue-green/10 transition cursor-pointer"
+              class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
               title="Edit"
             >
-              <Pencil class="w-3.5 h-3.5" />
+              <Pencil class="w-5 h-5" />
             </button>
             <button
               @click.stop="emit('delete', lead)"
-              class="p-1 text-slate-text hover:text-error rounded hover:bg-error/10 transition cursor-pointer"
+              class="p-2.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
               title="Delete"
             >
-              <Trash2 class="w-3.5 h-3.5" />
+              <Trash2 class="w-5 h-5" />
             </button>
           </div>
         </div>

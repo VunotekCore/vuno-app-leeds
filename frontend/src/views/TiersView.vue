@@ -104,18 +104,18 @@ onMounted(fetchTiers)
             ${{ parseFloat(tier.price).toFixed(2) }} USD
           </p>
         </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant/10">
           <button
             @click="openEdit(tier)"
-            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
           >
-            <Pencil class="w-4 h-4" />
+            <Pencil class="w-5 h-5" />
           </button>
           <button
             @click="handleDelete(tier)"
-            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
           >
-            <Trash2 class="w-4 h-4" />
+            <Trash2 class="w-5 h-5" />
           </button>
         </div>
       </div>
