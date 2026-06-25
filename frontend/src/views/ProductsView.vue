@@ -96,7 +96,7 @@ onMounted(fetchProducts)
 
     <template v-else>
     <!-- Desktop: table -->
-    <div class="hidden lg:block glass-panel rounded-xl overflow-hidden">
+    <div class="hidden md:block glass-panel rounded-xl overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
@@ -143,8 +143,8 @@ onMounted(fetchProducts)
       </div>
     </div>
 
-    <!-- Mobile/tablet: cards -->
-    <div class="lg:hidden grid gap-3 sm:grid-cols-2">
+    <!-- Mobile: cards -->
+    <div class="md:hidden grid gap-3 sm:grid-cols-2">
       <div
         v-for="product in products"
         :key="product.id"
@@ -157,18 +157,18 @@ onMounted(fetchProducts)
           </p>
         </div>
         <p v-if="product.description" class="text-xs text-on-surface-variant line-clamp-2 mb-3">{{ product.description }}</p>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant/10">
           <button
             @click="openEdit(product)"
-            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
           >
-            <Pencil class="w-4 h-4" />
+            <Pencil class="w-5 h-5" />
           </button>
           <button
             @click="handleDelete(product)"
-            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
           >
-            <Trash2 class="w-4 h-4" />
+            <Trash2 class="w-5 h-5" />
           </button>
         </div>
       </div>

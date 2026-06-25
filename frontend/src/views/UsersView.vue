@@ -136,7 +136,7 @@ onMounted(fetchUsers)
     </div>
 
     <template v-else>
-    <div class="hidden lg:block glass-panel rounded-xl overflow-hidden">
+    <div class="hidden md:block glass-panel rounded-xl overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
@@ -197,8 +197,8 @@ onMounted(fetchUsers)
       </div>
     </div>
 
-    <!-- Mobile/tablet: cards -->
-    <div class="lg:hidden grid gap-3 sm:grid-cols-2">
+    <!-- Mobile: cards -->
+    <div class="md:hidden grid gap-3 sm:grid-cols-2">
       <div
         v-for="user in users"
         :key="user.id"

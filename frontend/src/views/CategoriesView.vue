@@ -89,7 +89,7 @@ onMounted(fetchCategories)
     </div>
 
     <template v-else>
-    <div class="hidden lg:block glass-panel rounded-xl overflow-hidden">
+    <div class="hidden md:block glass-panel rounded-xl overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
@@ -125,7 +125,7 @@ onMounted(fetchCategories)
       </div>
     </div>
 
-    <div class="lg:hidden grid gap-3 sm:grid-cols-2">
+    <div class="md:hidden grid gap-3 sm:grid-cols-2">
       <div
         v-for="category in categories"
         :key="category.id"
@@ -134,18 +134,18 @@ onMounted(fetchCategories)
         <div class="mb-2">
           <h3 class="text-sm font-semibold text-on-surface font-display truncate">{{ category.name }}</h3>
         </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-outline-variant/10">
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant/10">
           <button
             @click="openEdit(category)"
-            class="p-1.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-vue-green rounded-lg hover:bg-vue-green/10 transition cursor-pointer"
           >
-            <Pencil class="w-4 h-4" />
+            <Pencil class="w-5 h-5" />
           </button>
           <button
             @click="handleDelete(category)"
-            class="p-1.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
+            class="p-2.5 text-slate-text hover:text-error rounded-lg hover:bg-error/10 transition cursor-pointer"
           >
-            <Trash2 class="w-4 h-4" />
+            <Trash2 class="w-5 h-5" />
           </button>
         </div>
       </div>

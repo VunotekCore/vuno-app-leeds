@@ -13,13 +13,13 @@ function toggleSidebar() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-surface flex">
+  <div class="min-h-screen bg-surface flex overflow-x-hidden max-w-full">
     <AppSidebar v-if="auth.isAuthenticated" :is-open="sidebarOpen" @toggle="toggleSidebar" />
 
-    <div class="flex-1 flex flex-col min-h-screen">
+    <div class="flex-1 flex flex-col min-h-screen max-w-full min-w-0">
       <header
         v-if="auth.isAuthenticated"
-        class="lg:hidden fixed top-0 left-0 right-0 z-20 h-14 glass-panel border-b border-outline-variant/20 flex items-center gap-3 px-4"
+        class="md:hidden fixed top-0 left-0 right-0 z-20 h-14 glass-panel border-b border-outline-variant/20 flex items-center gap-3 px-4"
       >
         <button
           @click="toggleSidebar"
@@ -33,8 +33,8 @@ function toggleSidebar() {
       </header>
 
       <main
-        class="flex-1 min-h-screen transition-all duration-300"
-        :class="auth.isAuthenticated ? 'pt-14 lg:pt-0 lg:ml-64' : ''"
+        class="flex-1 min-h-screen transition-all duration-300 max-w-full min-w-0"
+        :class="auth.isAuthenticated ? 'pt-14 md:pt-0 md:ml-64' : ''"
       >
         <router-view />
       </main>

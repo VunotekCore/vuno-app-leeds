@@ -64,10 +64,10 @@ function close() {
 </script>
 
 <template>
-  <div @click.self="close" v-if="isOpen" class="fixed inset-0 z-30 bg-black/50 lg:hidden" />
+  <div @click.self="close" v-if="isOpen" class="fixed inset-0 z-30 bg-black/50 md:hidden" />
 
   <aside
-    class="fixed top-0 left-0 z-40 w-64 h-screen glass-panel border-r border-outline-variant/30 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-64 h-screen glass-panel border-r border-outline-variant/30 flex flex-col transition-transform duration-300 -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': isOpen }"
   >
     <div class="flex items-center justify-between px-6 pt-6 pb-5 border-b border-outline-variant/20">
@@ -85,7 +85,7 @@ function close() {
           <span class="text-[10px] text-slate-text font-body uppercase tracking-widest">CRM</span>
         </div>
       </router-link>
-      <button @click="close" class="lg:hidden p-1 text-slate-text hover:text-on-surface transition cursor-pointer" aria-label="Close sidebar">
+      <button @click="close" class="md:hidden p-1 text-slate-text hover:text-on-surface transition cursor-pointer" aria-label="Close sidebar">
         <X class="w-5 h-5" />
       </button>
     </div>

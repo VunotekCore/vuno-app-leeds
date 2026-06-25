@@ -73,33 +73,33 @@ function formatUSD(amount) {
       <div
         v-for="row in rows"
         :key="row.status"
-        class="flex items-center gap-3"
+        class="flex items-center gap-2 sm:gap-3"
       >
         <component
           :is="row.icon"
           :class="[row.color, 'w-4 h-4 shrink-0']"
         />
-        <span class="text-sm text-on-surface w-28 shrink-0">{{ row.label }}</span>
-        <span class="text-xs text-slate-text w-16 shrink-0">{{ row.count }} {{ row.count === 1 ? 'lead' : 'leads' }}</span>
-        <div class="flex-1 h-2 rounded-full bg-surface-container-highest overflow-hidden">
+        <span class="text-sm text-on-surface w-20 sm:w-28 min-w-0 truncate">{{ row.label }}</span>
+        <span class="text-xs text-slate-text w-12 sm:w-16 shrink-0 text-right whitespace-nowrap">{{ row.count }}</span>
+        <div class="flex-1 h-2 rounded-full bg-surface-container-highest overflow-hidden min-w-[12px]">
           <div
             :class="[row.bar, 'h-full rounded-full transition-all duration-500']"
             :style="{ width: (row.value / maxValue * 100) + '%' }"
           />
         </div>
-        <span class="text-sm font-semibold text-on-surface w-24 text-right shrink-0 font-display">
+        <span class="text-xs sm:text-sm font-semibold text-on-surface w-20 sm:w-24 text-right shrink-0 font-display">
           {{ formatUSD(row.value) }}
         </span>
       </div>
 
-      <div class="flex items-center gap-3 pt-3 border-t border-outline-variant/20">
+      <div class="flex items-center gap-2 sm:gap-3 pt-3 border-t border-outline-variant/20">
         <TrendingUp class="w-4 h-4 text-vue-green shrink-0" />
-        <span class="text-sm font-bold text-on-surface w-28 shrink-0 font-display">TOTAL</span>
-        <span class="text-xs text-slate-text w-16 shrink-0">{{ rows.reduce((a, r) => a + r.count, 0) }} leads</span>
-        <div class="flex-1 h-2 rounded-full bg-surface-container-highest overflow-hidden">
+        <span class="text-sm font-bold text-on-surface w-20 sm:w-28 min-w-0 truncate font-display">TOTAL</span>
+        <span class="text-xs text-slate-text w-12 sm:w-16 shrink-0 text-right whitespace-nowrap">{{ rows.reduce((a, r) => a + r.count, 0) }}</span>
+        <div class="flex-1 h-2 rounded-full bg-surface-container-highest overflow-hidden min-w-[12px]">
           <div class="h-full rounded-full bg-gradient-to-r from-vue-green to-success" style="width: 100%" />
         </div>
-        <span class="text-sm font-bold text-vue-green w-24 text-right shrink-0 metric-glow font-display">
+        <span class="text-xs sm:text-sm font-bold text-vue-green w-20 sm:w-24 text-right shrink-0 metric-glow font-display">
           {{ formatUSD(grandTotal) }}
         </span>
       </div>
