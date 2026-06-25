@@ -20,6 +20,7 @@ const activeTab = ref('prospecting')
 const showForm = ref(false)
 const editingLead = ref(null)
 const contactingLead = ref(null)
+const contactChannel = ref('whatsapp')
 const noteTakingLead = ref(null)
 
 const leads = computed(() => {
@@ -120,8 +121,9 @@ function handleNewLead() {
   showForm.value = true
 }
 
-function handleContact(lead) {
+function handleContact(lead, channel) {
   contactingLead.value = lead
+  contactChannel.value = channel || 'whatsapp'
 }
 
 function handleNotes(lead) {
@@ -247,6 +249,7 @@ onMounted(fetchPageData)
       :lead="contactingLead"
       :templates="templates"
       :tier-mapping="tierMapping"
+      :channel="contactChannel"
       @close="contactingLead = null"
       @sent="handleContactSent"
     />

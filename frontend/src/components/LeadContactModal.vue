@@ -1,20 +1,24 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import api from '../services/api'
-import { X, Check, XCircle, Loader } from '@lucide/vue'
+import { X, Check, XCircle, Loader, Smartphone, Mail } from '@lucide/vue'
 
 const props = defineProps({
   lead: { type: Object, required: true },
   templates: { type: Array, default: () => [] },
   tierMapping: { type: Object, default: () => ({}) },
+  channel: { type: String, default: 'whatsapp' },
 })
 
 const emit = defineEmits(['close', 'sent'])
 
-const selectedTemplateId = ref(null)
+const selectedTemplateId = ref(props.lead.selected_template_id || null)
+const selectedChannel = ref(props.channel)
+const subject = ref('')
+const subjectDirty = ref(false)
 const sending = ref(false)
 const previewMessage = ref('')
-const result = ref(null) // { success: true/false, message: '' }
+const result = ref(null)
 
 const tierPrice = computed(() => props.tierMapping[props.lead.tier_classification] || '')
 
@@ -42,20 +46,38 @@ watch(selectedTemplateId, (id) => {
     .replace(/\[StoreName\]/g, props.lead.store_name)
     .replace(/\[TierPrice\]/g, tierPrice.value)
     .replace(/\[ProductName\]/g, props.lead.product_name || '')
+
+  if (selectedChannel.value === 'email' && !subjectDirty.value) {
+    subject.value = tpl.template_name
+  }
+})
+
+watch(selectedChannel, (ch) => {
+  result.value = null
+  if (ch === 'email' && selectedTemplateId.value && !subjectDirty.value) {
+    const tpl = props.templates.find((t) => t.id === selectedTemplateId.value)
+    if (tpl) subject.value = tpl.template_name
+  }
 })
 
 async function handleSend() {
   if (!selectedTemplateId.value) return
+  if (selectedChannel.value === 'email' && !props.lead.email) return
+  if (selectedChannel.value === 'email' && !subject.value.trim()) return
+
   sending.value = true
   result.value = null
   try {
     const { data } = await api.post(`/api/leads/${props.lead.id}/send`, {
       template_id: selectedTemplateId.value,
+      channel: selectedChannel.value,
+      subject: selectedChannel.value === 'email' ? subject.value.trim() : undefined,
     })
-    if (data.data.wa_url) {
+    if (selectedChannel.value === 'whatsapp' && data.data.wa_url) {
       window.open(data.data.wa_url, '_blank', 'noopener,noreferrer')
     }
-    result.value = { success: true, message: 'Message sent successfully via WhatsApp' }
+    const channelLabel = selectedChannel.value === 'whatsapp' ? 'WhatsApp' : 'Email'
+    result.value = { success: true, message: `Message sent successfully via ${channelLabel}` }
     emit('sent', data.data)
   } catch (err) {
     const msg = err.response?.data?.message || 'Failed to send message'
@@ -79,7 +101,32 @@ async function handleSend() {
         </button>
       </div>
 
-      <div class="p-6 space-y-4">
+      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        <!-- Channel selector -->
+        <div class="flex gap-2">
+          <button
+            @click="selectedChannel = 'whatsapp'"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition cursor-pointer"
+            :class="selectedChannel === 'whatsapp'
+              ? 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30'
+              : 'bg-surface-charcoal text-slate-text border border-outline-variant/20 hover:border-outline'"
+          >
+            <Smartphone class="w-4 h-4" />
+            WhatsApp
+          </button>
+          <button
+            @click="selectedChannel = 'email'"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition cursor-pointer"
+            :class="selectedChannel === 'email'
+              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+              : 'bg-surface-charcoal text-slate-text border border-outline-variant/20 hover:border-outline'"
+          >
+            <Mail class="w-4 h-4" />
+            Email
+          </button>
+        </div>
+
+        <!-- Lead info -->
         <div class="glass-panel rounded-lg p-3 space-y-1 text-sm">
           <div class="flex justify-between gap-4">
             <span class="text-slate-text shrink-0">Phone</span>
@@ -88,6 +135,10 @@ async function handleSend() {
           <div v-if="lead.email" class="flex justify-between gap-4">
             <span class="text-slate-text shrink-0">Email</span>
             <span class="text-on-surface font-medium truncate">{{ lead.email }}</span>
+          </div>
+          <div v-else-if="selectedChannel === 'email'" class="flex justify-between gap-4">
+            <span class="text-error shrink-0">Email</span>
+            <span class="text-error font-medium">No email address</span>
           </div>
           <div class="flex justify-between gap-4">
             <span class="text-slate-text shrink-0">Status</span>
@@ -103,6 +154,19 @@ async function handleSend() {
           </div>
         </div>
 
+        <!-- Subject (email only) -->
+        <div v-if="selectedChannel === 'email'">
+          <label class="block text-sm font-medium text-on-surface-variant mb-1">Subject</label>
+          <input
+            v-model="subject"
+            @input="subjectDirty = true"
+            type="text"
+            placeholder="Email subject..."
+            class="w-full px-4 py-2 bg-surface-charcoal border border-outline-variant/50 rounded-lg text-on-surface placeholder-slate-text/50 focus:ring-2 focus:ring-vue-green/40 focus:border-vue-green outline-none transition"
+          />
+        </div>
+
+        <!-- Template select -->
         <div>
           <label class="block text-sm font-medium text-on-surface-variant mb-1">Template</label>
           <select
@@ -116,13 +180,21 @@ async function handleSend() {
           </select>
         </div>
 
+        <!-- Preview -->
         <div v-if="previewMessage">
           <label class="block text-sm font-medium text-on-surface-variant mb-1">Preview</label>
-          <div class="bg-surface-charcoal border border-outline-variant/30 rounded-lg p-3 text-sm text-on-surface-variant whitespace-pre-wrap max-h-32 overflow-y-auto">
+          <div v-if="selectedChannel === 'email' && subject" class="bg-surface-charcoal border border-outline-variant/30 rounded-lg p-3 text-sm space-y-1">
+            <div class="text-on-surface font-medium truncate">Subject: {{ subject }}</div>
+            <div class="text-on-surface-variant whitespace-pre-wrap max-h-32 overflow-y-auto border-t border-outline-variant/20 pt-1">
+              {{ previewMessage }}
+            </div>
+          </div>
+          <div v-else class="bg-surface-charcoal border border-outline-variant/30 rounded-lg p-3 text-sm text-on-surface-variant whitespace-pre-wrap max-h-32 overflow-y-auto">
             {{ previewMessage }}
           </div>
         </div>
 
+        <!-- Result -->
         <div
           v-if="result"
           class="flex items-start gap-2 px-4 py-3 rounded-lg text-sm"
@@ -135,6 +207,7 @@ async function handleSend() {
           <span>{{ result.message }}</span>
         </div>
 
+        <!-- Actions -->
         <div class="flex items-center justify-between pt-2">
           <button
             @click="emit('close')"
@@ -146,12 +219,19 @@ async function handleSend() {
           <button
             v-if="!result?.success"
             @click="handleSend"
-            :disabled="!selectedTemplateId || sending"
-            class="flex items-center justify-center p-2.5 bg-[#25D366] hover:bg-[#128C7E] disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition cursor-pointer"
-            title="Send via WhatsApp"
+            :disabled="!selectedTemplateId || sending || (selectedChannel === 'email' && (!lead.email || !subject.trim()))"
+            class="flex items-center justify-center gap-2 px-5 py-2.5 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition cursor-pointer text-sm font-semibold"
+            :class="selectedChannel === 'whatsapp'
+              ? 'bg-[#25D366] hover:bg-[#128C7E] text-white'
+              : 'bg-blue-500 hover:bg-blue-600 text-white'"
+            :title="selectedChannel === 'whatsapp' ? 'Send via WhatsApp' : 'Send via Email'"
           >
-            <Loader v-if="sending" class="w-4 h-4 animate-spin text-white" />
-            <svg v-else viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <Loader v-if="sending" class="w-4 h-4 animate-spin" />
+            <template v-else>
+              <Smartphone v-if="selectedChannel === 'whatsapp'" class="w-4 h-4" />
+              <Mail v-else class="w-4 h-4" />
+              {{ selectedChannel === 'whatsapp' ? 'Send WhatsApp' : 'Send Email' }}
+            </template>
           </button>
         </div>
       </div>
