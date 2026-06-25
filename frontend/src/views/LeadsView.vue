@@ -6,6 +6,7 @@ import LeadKanban from '../components/LeadKanban.vue'
 import LeadTable from '../components/LeadTable.vue'
 import LeadContactModal from '../components/LeadContactModal.vue'
 import LeadNotesModal from '../components/LeadNotesModal.vue'
+import LeadPreviewModal from '../components/LeadPreviewModal.vue'
 import { Plus, Search, Users, Target, Star, Archive } from '@lucide/vue'
 
 const allLeads = ref({ prospecting: [], clients: [], archived: [] })
@@ -22,6 +23,7 @@ const editingLead = ref(null)
 const contactingLead = ref(null)
 const contactChannel = ref('whatsapp')
 const noteTakingLead = ref(null)
+const previewingLead = ref(null)
 
 const leads = computed(() => {
   const group = allLeads.value[activeTab.value]
@@ -132,6 +134,15 @@ function handleNotes(lead) {
 
 function handleNotesClose() {
   noteTakingLead.value = null
+}
+
+function handlePreview(lead) {
+  previewingLead.value = lead
+}
+
+function handlePreviewEdit(lead) {
+  previewingLead.value = null
+  handleEdit(lead)
 }
 
 function handleContactSent() {
@@ -254,6 +265,13 @@ onMounted(fetchPageData)
       @sent="handleContactSent"
     />
 
+    <LeadPreviewModal
+      v-if="previewingLead"
+      :lead="previewingLead"
+      @close="previewingLead = null"
+      @edit="handlePreviewEdit"
+    />
+
     <LeadKanban
       v-if="activeTab === 'prospecting'"
       :leads="leads"
@@ -265,6 +283,7 @@ onMounted(fetchPageData)
       @contact="handleContact"
       @notes="handleNotes"
       @send-whats-app="handleSendWhatsApp"
+      @preview="handlePreview"
     />
 
     <LeadTable
@@ -279,8 +298,9 @@ onMounted(fetchPageData)
       @notes="handleNotes"
       @send-whats-app="handleSendWhatsApp"
       @update-status="handleUpdateStatus"
-      @edit="handleEdit"
-      @delete="handleDelete"
+        @edit="handleEdit"
+        @delete="handleDelete"
+        @preview="handlePreview"
     />
   </div>
 </template>

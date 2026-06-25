@@ -10,7 +10,7 @@ defineProps({
   statusScope: { type: String, default: 'prospecting' },
 })
 
-const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'delete', 'notes'])
+const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'delete', 'notes', 'preview'])
 </script>
 
 <template>
@@ -195,7 +195,10 @@ const emit = defineEmits(['contact', 'sendWhatsApp', 'updateStatus', 'edit', 'de
         </div>
 
         <!-- Body -->
-        <div class="flex flex-wrap gap-1.5 mb-3">
+        <div
+          class="flex flex-wrap gap-1.5 mb-3 cursor-pointer"
+          @click.stop="emit('preview', lead)"
+        >
           <span
             v-if="lead.product_name"
             class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium"

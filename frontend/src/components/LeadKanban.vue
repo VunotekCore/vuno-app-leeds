@@ -11,7 +11,7 @@ const props = defineProps({
   search: { type: String, default: '' },
 })
 
-const emit = defineEmits(['updateStatus', 'edit', 'delete', 'contact', 'sendWhatsApp', 'notes'])
+const emit = defineEmits(['updateStatus', 'edit', 'delete', 'contact', 'sendWhatsApp', 'notes', 'preview'])
 
 const statusColumns = [
   { key: 'Pending', label: 'Pending', color: 'border-l-yellow-500' },
@@ -107,7 +107,11 @@ function toggleColumn(key) {
           </div>
 
           <!-- Body -->
-          <div v-if="lead.product_name || lead.tier_classification || lead.category_name" class="flex flex-wrap gap-1">
+          <div
+            v-if="lead.product_name || lead.tier_classification || lead.category_name"
+            class="flex flex-wrap gap-1 cursor-pointer"
+            @click.stop="emit('preview', lead)"
+          >
             <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
               {{ lead.product_name }}
             </span>
@@ -249,7 +253,11 @@ function toggleColumn(key) {
             <p class="text-xs text-slate-text truncate">{{ lead.phone ? `+${lead.phone}` : '-' }}</p>
           </div>
 
-          <div v-if="lead.product_name || lead.tier_classification || lead.category_name" class="flex flex-wrap gap-1">
+          <div
+            v-if="lead.product_name || lead.tier_classification || lead.category_name"
+            class="flex flex-wrap gap-1 cursor-pointer"
+            @click.stop="emit('preview', lead)"
+          >
             <span v-if="lead.product_name" class="text-xs bg-vue-green/10 text-vue-green px-1.5 py-0.5 rounded font-medium">
               {{ lead.product_name }}
             </span>

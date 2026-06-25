@@ -9,3 +9,4 @@ dist/
 /backend/public/dist/
 backend/.env.example
 backend/leeds.db
+backend/config/mail.php

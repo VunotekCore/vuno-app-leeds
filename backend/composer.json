@@ -1,0 +1,9 @@
+{
+  "name": "vunotek/leeds-backend",
+  "description": "VUNO LEED CRM Backend",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "phpmailer/phpmailer": "^6.9"
+  }
+}
