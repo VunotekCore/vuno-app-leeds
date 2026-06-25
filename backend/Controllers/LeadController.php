@@ -157,6 +157,7 @@ class LeadController
     }
 
     $data = Request::body();
+    $channel = $data['channel'] ?? 'whatsapp';
 
     $template = null;
     $renderedMessage = null;
@@ -180,6 +181,54 @@ class LeadController
     if (!$renderedMessage) {
       Response::error('No message to send', 422);
     }
+
+    // ── Email channel ──────────────────────────────────────────────
+    if ($channel === 'email') {
+      if (empty($lead['email'])) {
+        Response::error('Lead has no email address', 422);
+      }
+
+      $mailConfig = require __DIR__ . '/../config/mail.php';
+      $subject = $data['subject'] ?? $template['template_name'] ?? 'No subject';
+
+      try {
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = $mailConfig['host'];
+        $mail->SMTPAuth   = !empty($mailConfig['username']);
+        $mail->Username   = $mailConfig['username'];
+        $mail->Password   = $mailConfig['password'];
+        $mail->SMTPSecure = $mailConfig['encryption'];
+        $mail->Port       = $mailConfig['port'];
+        $mail->CharSet    = 'UTF-8';
+
+        $mail->setFrom($mailConfig['from_email'], $mailConfig['from_name']);
+        $mail->addAddress($lead['email'], $lead['store_name']);
+        $mail->Subject = $subject;
+        $mail->Body    = nl2br($renderedMessage);
+        $mail->AltBody = $renderedMessage;
+
+        $mail->send();
+      } catch (\PHPMailer\PHPMailer\Exception $e) {
+        Response::error('Failed to send email: ' . $e->getMessage(), 500);
+      }
+
+      $updated = Lead::advanceContact($params['id']);
+      if (!$updated) {
+        Response::error('Failed to update contact status', 500);
+      }
+
+      $lead = Lead::findById($params['id']);
+
+      Response::success([
+        'lead'             => $lead,
+        'rendered_message' => $renderedMessage,
+        'channel'          => 'email',
+      ], 'Email sent successfully');
+      return;
+    }
+
+    // ── WhatsApp channel (existing) ─────────────────────────────────
 
     // Callmebot API integration (preserved for future use)
     if (false) {
