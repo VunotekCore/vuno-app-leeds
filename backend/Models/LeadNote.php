@@ -42,6 +42,22 @@ class LeadNote
     return $uuid;
   }
 
+  public static function logStatusChange(
+    string $leadId,
+    string $oldStatus,
+    string $newStatus,
+    string $userId,
+    string $userEmail,
+    ?string $action = null,
+    ?string $detail = null,
+  ): string {
+    $note = match ($action) {
+      'send' => "{$userEmail} sent {$detail}, status changed from {$oldStatus} to {$newStatus}",
+      default => "{$userEmail} changed status from {$oldStatus} to {$newStatus}",
+    };
+    return self::create($leadId, $note, $userId);
+  }
+
   public static function delete(string $uuid): bool
   {
     $db = Database::getInstance();
