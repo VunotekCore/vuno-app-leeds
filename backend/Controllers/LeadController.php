@@ -7,6 +7,7 @@ use Core\Response;
 use Models\Lead;
 use Models\Template;
 use Models\Category;
+use Models\LeadNote;
 use PDOException;
 
 class LeadController
@@ -86,10 +87,21 @@ class LeadController
     }
 
     $data = Request::body();
+    $oldStatus = $lead['contact_status'];
 
     try {
       Lead::update($params['id'], $data);
       $updated = Lead::findById($params['id']);
+
+      if (array_key_exists('contact_status', $data) && $oldStatus !== $updated['contact_status']) {
+        LeadNote::logStatusChange(
+          leadId: $params['id'],
+          oldStatus: $oldStatus,
+          newStatus: $updated['contact_status'],
+          userId: $_REQUEST['auth_user']['sub'],
+          userEmail: $_REQUEST['auth_user']['email'],
+        );
+      }
 
       Response::success($updated, 'Lead updated successfully');
     } catch (PDOException $e) {
@@ -158,6 +170,7 @@ class LeadController
 
     $data = Request::body();
     $channel = $data['channel'] ?? 'whatsapp';
+    $oldStatus = $lead['contact_status'];
 
     $template = null;
     $renderedMessage = null;
@@ -220,6 +233,18 @@ class LeadController
 
       $lead = Lead::findById($params['id']);
 
+      if ($oldStatus !== $lead['contact_status']) {
+        LeadNote::logStatusChange(
+          leadId: $params['id'],
+          oldStatus: $oldStatus,
+          newStatus: $lead['contact_status'],
+          userId: $_REQUEST['auth_user']['sub'],
+          userEmail: $_REQUEST['auth_user']['email'],
+          action: 'send',
+          detail: "Email with template \"{$template['template_name']}\"",
+        );
+      }
+
       Response::success([
         'lead'             => $lead,
         'rendered_message' => $renderedMessage,
@@ -267,6 +292,18 @@ class LeadController
     }
 
     $lead = Lead::findById($params['id']);
+
+    if ($oldStatus !== $lead['contact_status']) {
+      LeadNote::logStatusChange(
+        leadId: $params['id'],
+        oldStatus: $oldStatus,
+        newStatus: $lead['contact_status'],
+        userId: $_REQUEST['auth_user']['sub'],
+        userEmail: $_REQUEST['auth_user']['email'],
+        action: 'send',
+        detail: "WhatsApp with template \"{$template['template_name']}\"",
+      );
+    }
 
     Response::success([
       'lead'             => $lead,

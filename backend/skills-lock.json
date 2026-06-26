@@ -5,6 +5,11 @@
       "source": "wshobson/agents",
       "sourceType": "autoskills-registry",
       "computedHash": "1f566c2d9c3b50a784b05d08f6b08ebfeb31f038e4d4173f2d488484edb058a6"
+    },
+    "php-pro": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "autoskills-registry",
+      "computedHash": "a3010d6ac7a48f5d4a79e1b03d28855f223740a03208a35233627ae7ad9e1037"
     }
   }
 }
